@@ -71,11 +71,13 @@ bool Window::init()
 	::UpdateWindow(m_hwnd);
 
 	m_is_running = true;
+	EngineTime::initialize();
 	return true;
 }
 
 bool Window::broadcast()
 {
+	EngineTime::LogFrameStart();
 	MSG msg;
 
 	window->onUpdate();
@@ -86,7 +88,7 @@ bool Window::broadcast()
 	}
 
 	Sleep(1);
-
+	EngineTime::LogFrameEnd();
 	return true;
 }
 

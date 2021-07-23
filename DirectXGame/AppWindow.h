@@ -9,6 +9,7 @@
 #include "ConstantBuffer.h"
 #include "Quad.h"
 #include "InputListener.h"
+#include "AnimatedQuad.h"
 
 class AppWindow : public Window, public InputListener
 {
@@ -54,6 +55,7 @@ private:
 	constant cc;
 
 	Quad* quad1;
+	AnimatedQuad* newQuad;
 
 	float m_previous_time;
 	float m_current_time;

@@ -130,7 +130,7 @@ void AppWindow::updatePosition()
 	temp.setRotationX(rot_x);
 	cc.m_world *= temp;*/
 
-	quad1->setRotation(Vector3D(rot_x, rot_y, 0));
+	//quad1->setRotation(Vector3D(rot_x, rot_y, 0));
 
 	m_cb->update(GraphicsEngine::getInstance()->getImmediateDeviceContext(), &cc);
 }
@@ -146,7 +146,8 @@ void AppWindow::onCreate()
 	RECT rc = this->getClientWindowRect();
 	int width = rc.right - rc.left;
 	int height = rc.bottom - rc.top;
-	cc.m_proj.setOrthoLH(width / 400.0f, height / 400.0f, -4.0f, 4.0f);
+	//cc.m_proj.setOrthoLH(width / 400.0f, height / 400.0f, -4.0f, 4.0f);
+	cc.m_proj.setIdentity();
 }
 
 void AppWindow::onUpdate()
@@ -164,7 +165,8 @@ void AppWindow::onUpdate()
 
 	updatePosition();
 
-	quad1->draw(m_cb);
+	//quad1->draw(m_cb);
+	newQuad->draw(m_cb, EngineTime::getDeltaTime());
 
 	m_swap_chain->present(true);
 
@@ -202,9 +204,38 @@ void AppWindow::createGraphicsWindow()
 	int height = rc.bottom - rc.top;
 
 	m_swap_chain->init(this->m_hwnd, width, height);
-	quad1 = new Quad();
+	//quad1 = new Quad();
+	newQuad = new AnimatedQuad();
 
-	quad1->createQuad(Vector3D(-0.5f, 0.5f, 1.0f), Vector3D(0.25f, 0.25f, 0.25f), Vector3D(1, 1, 0));
+	//quad1->createQuad(Vector3D(-0.5f, 0.5f, 1.0f), Vector3D(0.25f, 0.25f, 0.25f), Vector3D(1, 1, 0));
+
+	Vector3D list[4] = {
+		Vector3D(-0.75f, -1.0f, 0),
+		Vector3D(-1.0f, 0.0f, 0),
+		Vector3D(0.0f, -0.5f, 0),
+		Vector3D(0.0f, 0.0f, 0)
+	};
+	Vector3D list2[4] = {
+		Vector3D(0.0f, 0.0f, 0),
+		Vector3D(0.25f, 0.5f, 0),
+		Vector3D(0.5f, -0.75f, 0),
+		Vector3D(0.75f, 0.75f, 0)
+	};
+	
+	Vector3D color[4] = {
+		Vector3D(1.0f, 0.0f, 0),
+		Vector3D(1.0f, 1.0f, 0),
+		Vector3D(0.0f, 0.0f, 1.0f),
+		Vector3D(1.0f, 1.0f, 1.0f)
+	};
+	Vector3D color2[4] = {
+		Vector3D(0.0f, 1.0f, 0),
+		Vector3D(1.0f, 1.0f, 0),
+		Vector3D(1.0f, 0.0f, 0),
+		Vector3D(0.0f, 0.0f, 1.0f)
+	};
+
+	newQuad->createQuad(list, list2, color, color2);
 
 	cc.m_time = 0;
 
