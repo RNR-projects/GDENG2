@@ -210,20 +210,20 @@ void AppWindow::createGraphicsWindow()
 	//quad1->createQuad(Vector3D(-0.5f, 0.5f, 1.0f), Vector3D(0.25f, 0.25f, 0.25f), Vector3D(1, 1, 0));
 
 	Vector3D list[4] = {
-		Vector3D(-0.75f, -1.0f, 0),
-		Vector3D(-1.0f, 0.0f, 0),
-		Vector3D(0.0f, -0.5f, 0),
-		Vector3D(0.0f, 0.0f, 0)
+		Vector3D(-0.6f, -0.9f, 0),
+		Vector3D(-0.9f, 0.0f, 0),
+		Vector3D(1.0f, -0.25f, 0),
+		Vector3D(-0.6f, -0.9f, 1.0f)
 	};
 	Vector3D list2[4] = {
-		Vector3D(0.0f, 0.0f, 0),
-		Vector3D(0.25f, 0.5f, 0),
-		Vector3D(0.5f, -0.75f, 0),
+		Vector3D(-0.25f, 0.0f, 0),
+		Vector3D(0.0f, 0.75f, 0),
+		Vector3D(0.0f, -0.75f, 0),
 		Vector3D(0.75f, 0.75f, 0)
 	};
 	
 	Vector3D color[4] = {
-		Vector3D(1.0f, 0.0f, 0),
+		Vector3D(0.5f, 0.0f, 0),
 		Vector3D(1.0f, 1.0f, 0),
 		Vector3D(0.0f, 0.0f, 1.0f),
 		Vector3D(1.0f, 1.0f, 1.0f)

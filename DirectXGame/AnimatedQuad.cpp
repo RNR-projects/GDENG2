@@ -22,7 +22,7 @@ AnimatedQuad::~AnimatedQuad()
 
 void AnimatedQuad::draw(ConstantBuffer* cb, float deltaTime)
 {
-	this->totalElapsedTime += deltaTime * speed;
+	this->totalElapsedTime += deltaTime;
 	this->deltaTime += deltaTime;
 	this->speed = 4.0f + sinf(this->deltaTime / 3.0f) * 3.0f;
 
@@ -37,7 +37,7 @@ void AnimatedQuad::draw(ConstantBuffer* cb, float deltaTime)
 	GraphicsEngine::getInstance()->getImmediateDeviceContext()->setVertexBuffer(m_vb);
 	GraphicsEngine::getInstance()->getImmediateDeviceContext()->setIndexBuffer(m_ib);
 
-	GraphicsEngine::getInstance()->getImmediateDeviceContext()->drawTriangleStrip(m_ib->getSizeIndexList(), 0);
+	GraphicsEngine::getInstance()->getImmediateDeviceContext()->drawTriangleStrip(m_vb->getSizeVertexList(), 0);
 }
 
 void AnimatedQuad::createQuad(Vector3D edge[4], Vector3D edge2[4], Vector3D colors[4], Vector3D colors2[4])
