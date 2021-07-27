@@ -38,6 +38,129 @@ void BoundingBox::setRotation(Vector3D newRotation)
 
 bool BoundingBox::checkRaycast(Vector3D rayOrigin, Vector3D rayDirection)
 {
+    //get reverse rotation direction for converting
+    Vector3D reverseRotation = Vector3D(-rotation.x, -rotation.y, -rotation.z);
+    //face 1
+    //check if ray is perpendicular with face normal
+    float dot = Vector3D::dotProduct(rayDirection, facePoints[0]);
+    if (dot != 0)
+    {
+        Vector3D vectorToOrigin = this->position + Vector3D(-width / 2.0f, 0.0f, 0.0f);//set face plane to lie on an axis
+        //convert ray direction and origin to object space
+        Vector3D convertedOrigin = Quaternion::rotatePointEuler(rayOrigin, reverseRotation) - vectorToOrigin;
+        Vector3D convertedDirection = Quaternion::rotatePointEuler(rayDirection, reverseRotation);
+        //get the scalar where the ray's x component is 0 (intersects with the axis and possibly the plane)
+        float t = -convertedOrigin.x / convertedDirection.x;
+        //if negative then the face in behind the camera and not actually being aimed at
+        if (t >= 0)
+        {
+            Vector3D possibleLocation(0, convertedOrigin.y + convertedDirection.y * t, convertedOrigin.z + convertedDirection.z * t);
+            //check if the intersection point is inside the face quadrilateral
+            if (possibleLocation.y <= height / 2.0f && possibleLocation.y >= -height / 2.0f)
+                if (possibleLocation.z <= depth / 2.0f && possibleLocation.z >= -depth / 2.0f)
+                    return true;
+        }
+    }
+    //face 2
+    dot = Vector3D::dotProduct(rayDirection, facePoints[1]);
+    if (dot != 0)
+    {
+        Vector3D vectorToOrigin = this->position + Vector3D(width / 2.0f, 0.0f, 0.0f);
+        
+        Vector3D convertedOrigin = Quaternion::rotatePointEuler(rayOrigin, reverseRotation) - vectorToOrigin;
+        Vector3D convertedDirection = Quaternion::rotatePointEuler(rayDirection, reverseRotation);
+
+        float t = -convertedOrigin.x / convertedDirection.x;
+
+        if (t >= 0)
+        {
+            Vector3D possibleLocation(0, convertedOrigin.y + convertedDirection.y * t, convertedOrigin.z + convertedDirection.z * t);
+
+            if (possibleLocation.y <= height / 2.0f && possibleLocation.y >= -height / 2.0f)
+                if (possibleLocation.z <= depth / 2.0f && possibleLocation.z >= -depth / 2.0f)
+                    return true;
+        }
+    }
+    //face 3
+    dot = Vector3D::dotProduct(rayDirection, facePoints[2]);
+    if (dot != 0)
+    {
+        Vector3D vectorToOrigin = this->position + Vector3D(0.0f, -height / 2.0f, 0.0f);
+        
+        Vector3D convertedOrigin = Quaternion::rotatePointEuler(rayOrigin, reverseRotation) - vectorToOrigin;
+        Vector3D convertedDirection = Quaternion::rotatePointEuler(rayDirection, reverseRotation);
+
+        float t = -convertedOrigin.y / convertedDirection.y;
+
+        if (t >= 0)
+        {
+            Vector3D possibleLocation(convertedOrigin.x + convertedDirection.x * t, 0, convertedOrigin.z + convertedDirection.z * t);
+
+            if (possibleLocation.x <= width / 2.0f && possibleLocation.x >= -width / 2.0f)
+                if (possibleLocation.z <= depth / 2.0f && possibleLocation.z >= -depth / 2.0f)
+                    return true;
+        }
+    }
+    //face 4
+    dot = Vector3D::dotProduct(rayDirection, facePoints[3]);
+    if (dot != 0)
+    {
+        Vector3D vectorToOrigin = this->position + Vector3D(0.0f, height / 2.0f, 0.0f);
+        
+        Vector3D convertedOrigin = Quaternion::rotatePointEuler(rayOrigin, reverseRotation) - vectorToOrigin;
+        Vector3D convertedDirection = Quaternion::rotatePointEuler(rayDirection, reverseRotation);
+
+        float t = -convertedOrigin.y / convertedDirection.y;
+
+        if (t >= 0)
+        {
+            Vector3D possibleLocation(convertedOrigin.x + convertedDirection.x * t, 0, convertedOrigin.z + convertedDirection.z * t);
+
+            if (possibleLocation.x <= width / 2.0f && possibleLocation.x >= -width / 2.0f)
+                if (possibleLocation.z <= depth / 2.0f && possibleLocation.z >= -depth / 2.0f)
+                    return true;
+        }
+    }
+    //face 5
+    dot = Vector3D::dotProduct(rayDirection, facePoints[4]);
+    if (dot != 0)
+    {
+        Vector3D vectorToOrigin = this->position + Vector3D(0.0f, 0.0f, -depth / 2.0f);
+        
+        Vector3D convertedOrigin = Quaternion::rotatePointEuler(rayOrigin, reverseRotation) - vectorToOrigin;
+        Vector3D convertedDirection = Quaternion::rotatePointEuler(rayDirection, reverseRotation);
+
+        float t = -convertedOrigin.z / convertedDirection.z;
+
+        if (t >= 0)
+        {
+            Vector3D possibleLocation(convertedOrigin.x + convertedDirection.x * t, convertedOrigin.y + convertedDirection.y * t, 0);
+
+            if (possibleLocation.x <= width / 2.0f && possibleLocation.x >= -width / 2.0f)
+                if (possibleLocation.y <= height / 2.0f && possibleLocation.y >= -height / 2.0f)
+                    return true;
+        }
+    }
+    //face 6
+    dot = Vector3D::dotProduct(rayDirection, facePoints[5]);
+    if (dot != 0)
+    {
+        Vector3D vectorToOrigin = this->position + Vector3D(0.0f, 0.0f, depth / 2.0f);
+        
+        Vector3D convertedOrigin = Quaternion::rotatePointEuler(rayOrigin, reverseRotation) - vectorToOrigin;
+        Vector3D convertedDirection = Quaternion::rotatePointEuler(rayDirection, reverseRotation);
+
+        float t = -convertedOrigin.z / convertedDirection.z;
+
+        if (t >= 0)
+        {
+            Vector3D possibleLocation(convertedOrigin.x + convertedDirection.x * t, convertedOrigin.y + convertedDirection.y * t, 0);
+
+            if (possibleLocation.x <= width / 2.0f && possibleLocation.x >= -width / 2.0f)
+                if (possibleLocation.y <= height / 2.0f && possibleLocation.y >= -height / 2.0f)
+                    return true;
+        }
+    }
 
     return false;
 }
@@ -53,12 +176,12 @@ void BoundingBox::updateEdges()
     edges[6] = Vector3D(-width / 2.0f, -height / 2.0f, -depth / 2.0f);
     edges[7] = Vector3D(width / 2.0f, -height / 2.0f, -depth / 2.0f);
 
-    facePoints[0] = Vector3D(-width / 2.0f, 0.0f, 0.0f);
-    facePoints[1] = Vector3D(width / 2.0f, 0.0f, 0.0f);
-    facePoints[2] = Vector3D(0.0f, -height / 2.0f, 0.0f);
-    facePoints[3] = Vector3D(0.0f, height / 2.0f, 0.0f);
-    facePoints[4] = Vector3D(0.0f, 0.0f, -depth / 2.0f);
-    facePoints[5] = Vector3D(0.0f, 0.0f, depth / 2.0f);
+    facePoints[0] = Vector3D(-width / 2.0f, 0.0f, 0.0f);//0 2 4 6
+    facePoints[1] = Vector3D(width / 2.0f, 0.0f, 0.0f);//1 3 5 7
+    facePoints[2] = Vector3D(0.0f, -height / 2.0f, 0.0f);//2 3 6 7
+    facePoints[3] = Vector3D(0.0f, height / 2.0f, 0.0f);//0 1 4 5
+    facePoints[4] = Vector3D(0.0f, 0.0f, -depth / 2.0f);//4 5 6 7
+    facePoints[5] = Vector3D(0.0f, 0.0f, depth / 2.0f);//0 1 2 3
 
     edges[0] = Quaternion::rotatePointEuler(edges[0], rotation);
     edges[1] = Quaternion::rotatePointEuler(edges[1], rotation);

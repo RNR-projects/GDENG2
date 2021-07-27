@@ -6,7 +6,7 @@
 #include "ConstantBuffer.h"
 #include "DeviceContext.h"
 #include "IndexBuffer.h"
-#include "BoundingSphere.h"
+#include "BoundingBox.h"
 
 Quad::Quad()
 {
@@ -23,7 +23,7 @@ Quad::Quad()
 
 Quad::~Quad()
 {
-	delete collisionSphere;
+	delete collisionBox;
 
 	m_vb->release();
 	m_vs->release();
@@ -51,7 +51,7 @@ void Quad::createQuad(Vector3D pos, Vector3D scale, Vector3D color)
 	this->scale = scale;
 	this->colors = color;
 
-	collisionSphere = new BoundingSphere(this->position, 0.5f);
+	collisionBox = new BoundingBox(this->position, this->rotation, 1.0f * this->scale.x, 1.0f * this->scale.y, 1.0f * this->scale.z);
 
 	GraphicsEngine* graphEngine = GraphicsEngine::getInstance();
 
@@ -121,6 +121,7 @@ void Quad::createQuad(Vector3D pos, Vector3D scale, Vector3D color)
 void Quad::setPosition(Vector3D newPos)
 {
 	this->position = newPos;
+	collisionBox->setPosition(this->position);
 
 	updateVertexLocations();
 }
@@ -128,6 +129,7 @@ void Quad::setPosition(Vector3D newPos)
 void Quad::setScale(Vector3D newScale)
 {
 	this->scale = newScale;
+	collisionBox->setDimensions(1.0f * this->scale.x, 1.0f * this->scale.y, 1.0f * this->scale.z);
 
 	updateVertexLocations();
 }
@@ -142,12 +144,24 @@ void Quad::setColors(Vector3D color)
 void Quad::setRotation(Vector3D rotation)
 {
 	this->rotation = rotation;
+	collisionBox->setRotation(rotation);
 
 	updateVertexLocations();
 }
 
 Vector3D* Quad::getVertexWorldPositions()
 {
+	Vector3D scaledEdges[] = {
+		Vector3D(-0.5f * this->scale.x, -0.5f * this->scale.y, -0.5f * this->scale.z),
+		Vector3D(-0.5f * this->scale.x, 0.5f * this->scale.y, -0.5f * this->scale.z),
+		Vector3D(0.5f * this->scale.x, 0.5f * this->scale.y, -0.5f * this->scale.z),
+		Vector3D(0.5f * this->scale.x, -0.5f * this->scale.y, -0.5f * this->scale.z),
+		Vector3D(0.5f * this->scale.x, -0.5f * this->scale.y, 0.5f * this->scale.z),
+		Vector3D(0.5f * this->scale.x, 0.5f * this->scale.y, 0.5f * this->scale.z),
+		Vector3D(-0.5f * this->scale.x, 0.5f * this->scale.y, 0.5f * this->scale.z),
+		Vector3D(-0.5f * this->scale.x, -0.5f * this->scale.y, 0.5f * this->scale.z),
+	};
+
 	Vector3D worldLocations[] = {
 		Quaternion::rotatePointEuler(edges[0], rotation) + this->position,
 		Quaternion::rotatePointEuler(edges[1], rotation) + this->position,
@@ -164,13 +178,11 @@ Vector3D* Quad::getVertexWorldPositions()
 
 bool Quad::checkRaycast(Vector3D rayOrigin, Vector3D rayDirection)
 {
-	return collisionSphere->checkRaycast(rayOrigin, rayDirection);
+	return collisionBox->checkRaycast(rayOrigin, rayDirection);
 }
 
 void Quad::updateVertexLocations()
 {
-	collisionSphere->setPosition(this->position);
-
 	GraphicsEngine* graphEngine = GraphicsEngine::getInstance();
 
 	void* shader_byte_code = nullptr;

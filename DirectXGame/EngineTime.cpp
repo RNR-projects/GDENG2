@@ -1,5 +1,4 @@
 #include "EngineTime.h"
-#include <iostream>
 
 EngineTime* EngineTime::sharedInstance = nullptr;
 
@@ -39,6 +38,4 @@ void EngineTime::LogFrameEnd()
     std::chrono::duration<double> elapsed_seconds = sharedInstance->end - sharedInstance->start;
 
     sharedInstance->deltaTime = elapsed_seconds.count();
-
-    std::cout << "Delta Time: " << sharedInstance->deltaTime << "\n";
 }
