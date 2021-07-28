@@ -11,14 +11,6 @@
 Quad::Quad()
 {
 	rotation = Vector3D();
-	edges[0] = Vector3D(-0.5f, -0.5f, -0.5f);
-	edges[1] = Vector3D(-0.5f, 0.5f, -0.5f);
-	edges[2] = Vector3D(0.5f, 0.5f, -0.5f);
-	edges[3] = Vector3D(0.5f, -0.5f, -0.5f);
-	edges[4] = Vector3D(0.5f, -0.5f, 0.5f);
-	edges[5] = Vector3D(0.5f, 0.5f, 0.5f);
-	edges[6] = Vector3D(-0.5f, 0.5f, 0.5f);
-	edges[7] = Vector3D(-0.5f, -0.5f, 0.5f);
 }
 
 Quad::~Quad()
@@ -51,6 +43,15 @@ void Quad::createQuad(Vector3D pos, Vector3D scale, Vector3D color)
 	this->scale = scale;
 	this->colors = color;
 
+	edges[0] = Vector3D(-this->scale.x / 2.0f, -this->scale.y / 2.0f, -this->scale.z / 2.0f);
+	edges[1] = Vector3D(-this->scale.x / 2.0f, this->scale.y / 2.0f, -this->scale.z / 2.0f);
+	edges[2] = Vector3D(this->scale.x / 2.0f, this->scale.y / 2.0f, -this->scale.z / 2.0f);
+	edges[3] = Vector3D(this->scale.x / 2.0f, -this->scale.y / 2.0f, -this->scale.z / 2.0f);
+	edges[4] = Vector3D(this->scale.x / 2.0f, -this->scale.y / 2.0f, this->scale.z / 2.0f);
+	edges[5] = Vector3D(this->scale.x / 2.0f, this->scale.y / 2.0f, this->scale.z / 2.0f);
+	edges[6] = Vector3D(-this->scale.x / 2.0f, this->scale.y / 2.0f, this->scale.z / 2.0f);
+	edges[7] = Vector3D(-this->scale.x / 2.0f, -this->scale.y / 2.0f, this->scale.z / 2.0f);
+
 	collisionBox = new BoundingBox(this->position, this->rotation, 1.0f * this->scale.x, 1.0f * this->scale.y, 1.0f * this->scale.z);
 
 	GraphicsEngine* graphEngine = GraphicsEngine::getInstance();
@@ -61,10 +62,6 @@ void Quad::createQuad(Vector3D pos, Vector3D scale, Vector3D color)
 
 
 	vertex list[] = {
-		/*{Vector3D(-0.5f, -0.5f, 0),	this->colors},
-		{Vector3D(-0.5, 0.5f, 0),		this->colors},
-		{Vector3D(0.5f, -0.5f, 0),	this->colors},
-		{Vector3D(0.5f, 0.5f, 0),		this->colors}*/
 		{ edges[0] + this->position,		this->colors },
 		{ edges[1] + this->position,		this->colors },
 		{ edges[2] + this->position,		this->colors },
@@ -131,6 +128,15 @@ void Quad::setScale(Vector3D newScale)
 	this->scale = newScale;
 	collisionBox->setDimensions(1.0f * this->scale.x, 1.0f * this->scale.y, 1.0f * this->scale.z);
 
+	edges[0] = Vector3D(-this->scale.x / 2.0f, -this->scale.y / 2.0f, -this->scale.z / 2.0f);
+	edges[1] = Vector3D(-this->scale.x / 2.0f, this->scale.y / 2.0f, -this->scale.z / 2.0f);
+	edges[2] = Vector3D(this->scale.x / 2.0f, this->scale.y / 2.0f, -this->scale.z / 2.0f);
+	edges[3] = Vector3D(this->scale.x / 2.0f, -this->scale.y / 2.0f, -this->scale.z / 2.0f);
+	edges[4] = Vector3D(this->scale.x / 2.0f, -this->scale.y / 2.0f, this->scale.z / 2.0f);
+	edges[5] = Vector3D(this->scale.x / 2.0f, this->scale.y / 2.0f, this->scale.z / 2.0f);
+	edges[6] = Vector3D(-this->scale.x / 2.0f, this->scale.y / 2.0f, this->scale.z / 2.0f);
+	edges[7] = Vector3D(-this->scale.x / 2.0f, -this->scale.y / 2.0f, this->scale.z / 2.0f);
+
 	updateVertexLocations();
 }
 
@@ -151,17 +157,6 @@ void Quad::setRotation(Vector3D rotation)
 
 Vector3D* Quad::getVertexWorldPositions()
 {
-	Vector3D scaledEdges[] = {
-		Vector3D(-0.5f * this->scale.x, -0.5f * this->scale.y, -0.5f * this->scale.z),
-		Vector3D(-0.5f * this->scale.x, 0.5f * this->scale.y, -0.5f * this->scale.z),
-		Vector3D(0.5f * this->scale.x, 0.5f * this->scale.y, -0.5f * this->scale.z),
-		Vector3D(0.5f * this->scale.x, -0.5f * this->scale.y, -0.5f * this->scale.z),
-		Vector3D(0.5f * this->scale.x, -0.5f * this->scale.y, 0.5f * this->scale.z),
-		Vector3D(0.5f * this->scale.x, 0.5f * this->scale.y, 0.5f * this->scale.z),
-		Vector3D(-0.5f * this->scale.x, 0.5f * this->scale.y, 0.5f * this->scale.z),
-		Vector3D(-0.5f * this->scale.x, -0.5f * this->scale.y, 0.5f * this->scale.z),
-	};
-
 	Vector3D worldLocations[] = {
 		Quaternion::rotatePointEuler(edges[0], rotation) + this->position,
 		Quaternion::rotatePointEuler(edges[1], rotation) + this->position,

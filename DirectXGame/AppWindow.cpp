@@ -20,20 +20,25 @@ void AppWindow::onLeftMouseDown(const Point& mouse_pos)
 	POINT point = { mouse_pos.x, mouse_pos.y };
 	ScreenToClient(this->m_hwnd, &point);
 
-	Vector3D convertedPos = Vector3D((float)point.x / (float)WIDTH * 2.0f - 1.0f, -(float)point.y / (float)HEIGHT * 2.0f + 1.0f, 1.0f);
+	RECT rc = this->getClientWindowRect();
+	int width = rc.right - rc.left;
+	int height = rc.bottom - rc.top;
+	Vector3D convertedPos = Vector3D((float)point.x / (float)width * 2.0f - 1.0f, -(float)point.y / (float)height * 2.0f + 1.0f, 0.0f);
 
 	Matrix4x4 inverseProj(cc.m_proj);
 	inverseProj.invert();
 	Vector3D raycastEye = inverseProj * convertedPos;
-	raycastEye.z = 1;
+	raycastEye.z = 0;
 
 	Matrix4x4 inverseView(cc.m_view);
 	inverseView.invert();
 	Vector3D raycastWorld = inverseView * raycastEye;
-	raycastWorld.normalize();
+	//raycastWorld.normalize();//normalize if we want direction vector for perspective raycast
 
 	std::cout << raycastWorld.x << " " << raycastWorld.y << " " << raycastWorld.z << "\n";
-	if (quad1->checkRaycast(Vector3D(0, 0, 0), raycastWorld))
+	//ortho raycast comes from cursor straight forward along z
+	//perspective raycast comes from camera position in the direction of raycast world
+	if (quad1->checkRaycast(Vector3D(raycastWorld.x, raycastWorld.y, -4.0f), Vector3D(0,0,1)))
 	{
 		std::cout << "true \n";
 		quad1->setColors(Vector3D(0, 0, 1));
@@ -63,8 +68,8 @@ void AppWindow::onRightMouseUp(const Point& mouse_pos)
 
 void AppWindow::onMouseMove(const Point& delta_mouse_pos)
 {
-	rot_x -= delta_mouse_pos.y * m_delta_time;
-	rot_y -= delta_mouse_pos.x * m_delta_time;
+	//rot_x -= delta_mouse_pos.y * m_delta_time;
+	//rot_y -= delta_mouse_pos.x * m_delta_time;
 }
 
 void AppWindow::onKeyDown(int key)
@@ -206,7 +211,7 @@ void AppWindow::createGraphicsWindow()
 	quad1 = new Quad();
 	//newQuad = new AnimatedQuad();
 
-	quad1->createQuad(Vector3D(-0.5f, 0.5f, 1.0f), Vector3D(1.0f, 1.0f, 1.0f), Vector3D(1, 1, 0));
+	quad1->createQuad(Vector3D(-0.5f, 0.5f, 1.0f), Vector3D(1,1,1), Vector3D(1, 1, 0));
 
 	/*Vector3D list[4] = {
 		Vector3D(-0.6f, -0.9f, 0),

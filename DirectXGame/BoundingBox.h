@@ -24,7 +24,6 @@ private:
 	float height;
 	float depth;
 
-	Vector3D edges[8];
 	Vector3D facePoints[6];
 };
 
