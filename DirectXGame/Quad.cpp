@@ -6,24 +6,16 @@
 #include "ConstantBuffer.h"
 #include "DeviceContext.h"
 #include "IndexBuffer.h"
-#include "BoundingSphere.h"
+#include "BoundingBox.h"
 
 Quad::Quad()
 {
 	rotation = Vector3D();
-	edges[0] = Vector3D(-0.5f, -0.5f, -0.5f);
-	edges[1] = Vector3D(-0.5f, 0.5f, -0.5f);
-	edges[2] = Vector3D(0.5f, 0.5f, -0.5f);
-	edges[3] = Vector3D(0.5f, -0.5f, -0.5f);
-	edges[4] = Vector3D(0.5f, -0.5f, 0.5f);
-	edges[5] = Vector3D(0.5f, 0.5f, 0.5f);
-	edges[6] = Vector3D(-0.5f, 0.5f, 0.5f);
-	edges[7] = Vector3D(-0.5f, -0.5f, 0.5f);
 }
 
 Quad::~Quad()
 {
-	delete collisionSphere;
+	delete collisionBox;
 
 	m_vb->release();
 	m_vs->release();
@@ -51,7 +43,16 @@ void Quad::createQuad(Vector3D pos, Vector3D scale, Vector3D color)
 	this->scale = scale;
 	this->colors = color;
 
-	collisionSphere = new BoundingSphere(this->position, 0.5f);
+	edges[0] = Vector3D(-this->scale.x / 2.0f, -this->scale.y / 2.0f, -this->scale.z / 2.0f);
+	edges[1] = Vector3D(-this->scale.x / 2.0f, this->scale.y / 2.0f, -this->scale.z / 2.0f);
+	edges[2] = Vector3D(this->scale.x / 2.0f, this->scale.y / 2.0f, -this->scale.z / 2.0f);
+	edges[3] = Vector3D(this->scale.x / 2.0f, -this->scale.y / 2.0f, -this->scale.z / 2.0f);
+	edges[4] = Vector3D(this->scale.x / 2.0f, -this->scale.y / 2.0f, this->scale.z / 2.0f);
+	edges[5] = Vector3D(this->scale.x / 2.0f, this->scale.y / 2.0f, this->scale.z / 2.0f);
+	edges[6] = Vector3D(-this->scale.x / 2.0f, this->scale.y / 2.0f, this->scale.z / 2.0f);
+	edges[7] = Vector3D(-this->scale.x / 2.0f, -this->scale.y / 2.0f, this->scale.z / 2.0f);
+
+	collisionBox = new BoundingBox(this->position, this->rotation, 1.0f * this->scale.x, 1.0f * this->scale.y, 1.0f * this->scale.z);
 
 	GraphicsEngine* graphEngine = GraphicsEngine::getInstance();
 
@@ -61,10 +62,6 @@ void Quad::createQuad(Vector3D pos, Vector3D scale, Vector3D color)
 
 
 	vertex list[] = {
-		/*{Vector3D(-0.5f, -0.5f, 0),	this->colors},
-		{Vector3D(-0.5, 0.5f, 0),		this->colors},
-		{Vector3D(0.5f, -0.5f, 0),	this->colors},
-		{Vector3D(0.5f, 0.5f, 0),		this->colors}*/
 		{ edges[0] + this->position,		this->colors },
 		{ edges[1] + this->position,		this->colors },
 		{ edges[2] + this->position,		this->colors },
@@ -121,6 +118,7 @@ void Quad::createQuad(Vector3D pos, Vector3D scale, Vector3D color)
 void Quad::setPosition(Vector3D newPos)
 {
 	this->position = newPos;
+	collisionBox->setPosition(this->position);
 
 	updateVertexLocations();
 }
@@ -128,6 +126,16 @@ void Quad::setPosition(Vector3D newPos)
 void Quad::setScale(Vector3D newScale)
 {
 	this->scale = newScale;
+	collisionBox->setDimensions(1.0f * this->scale.x, 1.0f * this->scale.y, 1.0f * this->scale.z);
+
+	edges[0] = Vector3D(-this->scale.x / 2.0f, -this->scale.y / 2.0f, -this->scale.z / 2.0f);
+	edges[1] = Vector3D(-this->scale.x / 2.0f, this->scale.y / 2.0f, -this->scale.z / 2.0f);
+	edges[2] = Vector3D(this->scale.x / 2.0f, this->scale.y / 2.0f, -this->scale.z / 2.0f);
+	edges[3] = Vector3D(this->scale.x / 2.0f, -this->scale.y / 2.0f, -this->scale.z / 2.0f);
+	edges[4] = Vector3D(this->scale.x / 2.0f, -this->scale.y / 2.0f, this->scale.z / 2.0f);
+	edges[5] = Vector3D(this->scale.x / 2.0f, this->scale.y / 2.0f, this->scale.z / 2.0f);
+	edges[6] = Vector3D(-this->scale.x / 2.0f, this->scale.y / 2.0f, this->scale.z / 2.0f);
+	edges[7] = Vector3D(-this->scale.x / 2.0f, -this->scale.y / 2.0f, this->scale.z / 2.0f);
 
 	updateVertexLocations();
 }
@@ -142,6 +150,7 @@ void Quad::setColors(Vector3D color)
 void Quad::setRotation(Vector3D rotation)
 {
 	this->rotation = rotation;
+	collisionBox->setRotation(rotation);
 
 	updateVertexLocations();
 }
@@ -164,13 +173,11 @@ Vector3D* Quad::getVertexWorldPositions()
 
 bool Quad::checkRaycast(Vector3D rayOrigin, Vector3D rayDirection)
 {
-	return collisionSphere->checkRaycast(rayOrigin, rayDirection);
+	return collisionBox->checkRaycast(rayOrigin, rayDirection);
 }
 
 void Quad::updateVertexLocations()
 {
-	collisionSphere->setPosition(this->position);
-
 	GraphicsEngine* graphEngine = GraphicsEngine::getInstance();
 
 	void* shader_byte_code = nullptr;

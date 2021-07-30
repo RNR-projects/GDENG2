@@ -34,6 +34,6 @@ private:
 	class PixelShader* m_ps;
 	class IndexBuffer* m_ib;
 
-	class BoundingSphere* collisionSphere;
+	class BoundingBox* collisionBox;
 };
 

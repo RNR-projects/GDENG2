@@ -38,6 +38,15 @@ public:
 
 		return v;
 	}
+	Vector3D operator -(const Vector3D& vector3)
+	{
+		Vector3D v;
+		v.x = x - vector3.x;
+		v.y = y - vector3.y;
+		v.z = z - vector3.z;
+
+		return v;
+	}
 	//Beware it uses sqrt which is expensive
 	float getMagnitude()
 	{
