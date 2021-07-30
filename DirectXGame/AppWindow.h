@@ -7,9 +7,11 @@
 #include "VertexShader.h"
 #include "PixelShader.h"
 #include "ConstantBuffer.h"
-#include "Quad.h"
+#include "Cube.h"
 #include "InputListener.h"
 #include "AnimatedQuad.h"
+#include <vector>
+#include "Plane.h"
 
 class AppWindow : public Window, public InputListener
 {
@@ -54,8 +56,9 @@ private:
 
 	constant cc;
 
-	Quad* quad1;
+	std::vector<Cube*> cubes;
 	AnimatedQuad* newQuad;
+	Plane* plane;
 
 	float m_previous_time;
 	float m_current_time;

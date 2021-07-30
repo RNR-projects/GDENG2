@@ -3,6 +3,7 @@
 #include "GameObjectConstants.h"
 #include "InputSystem.h"
 #include <iostream>
+#include <random>
 
 AppWindow* AppWindow::sharedInstance = nullptr;
 
@@ -38,7 +39,7 @@ void AppWindow::onLeftMouseDown(const Point& mouse_pos)
 	std::cout << raycastWorld.x << " " << raycastWorld.y << " " << raycastWorld.z << "\n";
 	//ortho raycast comes from cursor straight forward along z
 	//perspective raycast comes from camera position in the direction of raycast world
-	if (quad1->checkRaycast(Vector3D(raycastWorld.x, raycastWorld.y, -4.0f), Vector3D(0,0,1)))
+	/*if (quad1->checkRaycast(Vector3D(raycastWorld.x, raycastWorld.y, -4.0f), Vector3D(0, 0, 1)))
 	{
 		std::cout << "true \n";
 		quad1->setColors(Vector3D(0, 0, 1));
@@ -47,7 +48,7 @@ void AppWindow::onLeftMouseDown(const Point& mouse_pos)
 	{
 		std::cout << "false \n";
 		quad1->setColors(Vector3D(1, 1, 0));
-	}
+	}*/
 	//scale_cube = 0.5f;
 }
 
@@ -135,7 +136,7 @@ void AppWindow::updatePosition()
 	temp.setRotationX(rot_x);
 	cc.m_world *= temp;*/
 
-	quad1->setRotation(Vector3D(rot_x, rot_y, 0));
+	//quad1->setRotation(Vector3D(rot_x, rot_y, 0));
 
 	m_cb->update(GraphicsEngine::getInstance()->getImmediateDeviceContext(), &cc);
 }
@@ -169,7 +170,12 @@ void AppWindow::onUpdate()
 
 	updatePosition();
 
-	quad1->draw(m_cb);
+	for (int i = 0; i < 1; i++)
+	{
+		this->cubes[i]->update(m_delta_time);
+		this->cubes[i]->draw(m_cb);
+	}
+	plane->draw(m_cb);
 	//newQuad->draw(m_cb, EngineTime::getDeltaTime());
 
 	m_swap_chain->present(true);
@@ -208,10 +214,15 @@ void AppWindow::createGraphicsWindow()
 	int height = rc.bottom - rc.top;
 
 	m_swap_chain->init(this->m_hwnd, width, height);
-	quad1 = new Quad();
+	for (int i = 0; i < 1; i++)
+	{
+		Vector3D loc = Vector3D(rand() % 200 / 100.0f - 1.0f, rand() % 200 / 100.0f - 1.0f, rand() % 200 / 100.0f - 1.0f);
+		Cube* cubey = new Cube("Cube " + i, Vector3D(), Vector3D(0.25f, 0.25f, 0.25f), Vector3D(1, 1, 0), Vector3D());
+		this->cubes.push_back(cubey);
+	}
+	plane = new Plane("Plane", Vector3D(0, -0.25f, 0), Vector3D(3, 1, 3), Vector3D(1, 1, 0), Vector3D(0,0,0));
 	//newQuad = new AnimatedQuad();
 
-	quad1->createQuad(Vector3D(-0.5f, 0.5f, 1.0f), Vector3D(1,1,1), Vector3D(1, 1, 0));
 
 	/*Vector3D list[4] = {
 		Vector3D(-0.6f, -0.9f, 0),
