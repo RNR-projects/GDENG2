@@ -170,11 +170,13 @@ void Cube::setRotation(Vector3D rotation)
 
 void Cube::update(float deltaTime)
 {
-	rot_x += deltaTime * speed;
+	//rot_x += deltaTime * speed;
 
-	rot_y += deltaTime * speed;
+	//rot_y += deltaTime * speed;
 
-	this->setRotation(rot_x, rot_y, 0);
+	//rot_z += deltaTime * speed;
+
+	this->setRotation(rot_x, rot_y, rot_z);
 }
 
 void Cube::draw(ConstantBuffer* cb)

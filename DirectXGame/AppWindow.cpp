@@ -118,23 +118,16 @@ void AppWindow::destroy()
 
 void AppWindow::updatePosition()
 {
-	m_delta_pos += m_delta_time / 10.0f;
-	if (m_delta_pos > 1.0f)
-		m_delta_pos = 0;
-
-	m_delta_scale += m_delta_time / 0.5f;
+	cc.m_world.setTranslation(Vector3D(1.0f, -2.0f, 0));
 
 	Matrix4x4 temp;
-	cc.m_world.setScale(Vector3D(scale_cube, scale_cube, scale_cube));
-
-	/*temp.setRotationZ(0.0f);
+	temp.setIdentity();
+	temp.setRotationZ(0.0f);
 	cc.m_world *= temp;
 	
-	temp.setRotationY(rot_y);
+	temp.setIdentity();
+	temp.setRotationY(0.78f);
 	cc.m_world *= temp;
-	
-	temp.setRotationX(rot_x);
-	cc.m_world *= temp;*/
 
 	//quad1->setRotation(Vector3D(rot_x, rot_y, 0));
 
@@ -152,7 +145,7 @@ void AppWindow::onCreate()
 	RECT rc = this->getClientWindowRect();
 	int width = rc.right - rc.left;
 	int height = rc.bottom - rc.top;
-	cc.m_proj.setOrthoLH(width / 400.0f, height / 400.0f, -4.0f, 4.0f);
+	cc.m_proj.setOrthoLH(width / 200.0f, height / 200.0f, -10.0f, 10.0f);
 }
 
 void AppWindow::onUpdate()
@@ -170,7 +163,7 @@ void AppWindow::onUpdate()
 
 	updatePosition();
 
-	for (int i = 0; i < 1; i++)
+	for (int i = 0; i < cubes.size(); i++)
 	{
 		this->cubes[i]->update(m_delta_time);
 		this->cubes[i]->draw(m_cb);
@@ -214,13 +207,19 @@ void AppWindow::createGraphicsWindow()
 	int height = rc.bottom - rc.top;
 
 	m_swap_chain->init(this->m_hwnd, width, height);
-	for (int i = 0; i < 1; i++)
+	/*for (int i = 0; i < 1; i++)
 	{
 		Vector3D loc = Vector3D(rand() % 200 / 100.0f - 1.0f, rand() % 200 / 100.0f - 1.0f, rand() % 200 / 100.0f - 1.0f);
-		Cube* cubey = new Cube("Cube " + i, Vector3D(), Vector3D(0.25f, 0.25f, 0.25f), Vector3D(1, 1, 0), Vector3D());
+		Cube* cubey = new Cube("Cube " + i, Vector3D(), Vector3D(0.25f, 0.25f, 0.25f), Vector3D(1, 1, 1), Vector3D());
 		this->cubes.push_back(cubey);
-	}
-	plane = new Plane("Plane", Vector3D(0, -0.25f, 0), Vector3D(3, 1, 3), Vector3D(1, 1, 0), Vector3D(0,0,0));
+	}*/
+	Cube* cubey = new Cube("Cube " + 1, Vector3D(0, 0.9f, 0), Vector3D(0.25f, 0.25f, 0.25f), Vector3D(1, 1, 1), Vector3D());
+	this->cubes.push_back(cubey);
+	Cube* cubey2 = new Cube("Cube " + 2, Vector3D(-1.5f, 2.0f, 0), Vector3D(0.25f, 0.25f, 0.25f), Vector3D(1, 1, 1), Vector3D());
+	this->cubes.push_back(cubey2);
+	Cube* cubey3 = new Cube("Cube " + 3, Vector3D(-1.5f, 3.0f, -2.0f), Vector3D(0.25f, 0.25f, 0.25f), Vector3D(1, 1, 1), Vector3D());
+	this->cubes.push_back(cubey3);
+	plane = new Plane("Plane", Vector3D(0, 0.5f, 0), Vector3D(5, 1, 5), Vector3D(1, 1, 0), Vector3D(0,0,0));
 	//newQuad = new AnimatedQuad();
 
 

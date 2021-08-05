@@ -32,6 +32,7 @@ private:
 
 	float rot_x = 0;
 	float rot_y = 0;
+	float rot_z = 0;
 	float speed = 1;
 
 	Vector3D edges[8];
