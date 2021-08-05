@@ -20,7 +20,7 @@ public:
 	static void initialize();
 	static void destroy();
 	
-	void updatePosition();
+	void update();
 
 	virtual void onCreate() override;
 	virtual void onUpdate() override;
@@ -35,7 +35,7 @@ public:
 	virtual void onKeyDown(int key) override;
 	virtual void onKeyUp(int key) override;
 
-	virtual void onMouseMove(const Point& delta_mouse_pos) override;
+	virtual void onMouseMove(const Point& mouse_pos) override;
 	virtual void onLeftMouseDown(const Point& delta_mouse_pos) override;
 	virtual void onLeftMouseUp(const Point& delta_mouse_pos) override;
 	virtual void onRightMouseDown(const Point& delta_mouse_pos) override;
@@ -70,6 +70,8 @@ private:
 	float rot_x = 0;
 	float rot_y = 0;
 
-	float scale_cube = 1;
+	float moveForward = 0.0f;
+	float moveRight = 0.0f;
+	Matrix4x4 worldCam;
 };
 

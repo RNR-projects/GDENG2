@@ -136,6 +136,34 @@ public:
 		return v;
 	}
 
+	Vector3D getZDirection()
+	{
+		return Vector3D(mat[2][0], mat[2][1], mat[2][2]);
+	}
+	
+	Vector3D getXDirection()
+	{
+		return Vector3D(mat[0][0], mat[0][1], mat[0][2]);
+	}
+	
+	Vector3D getTranslation()
+	{
+		return Vector3D(mat[3][0], mat[3][1], mat[3][2]);
+	}
+
+	void setPerspectiveFovLH(float fov, float aspect, float znear, float zfar)
+	{
+		setIdentity();
+
+		float yScale = 1.0f / tanf(fov / 2.0f);
+		float xScale = yScale / aspect;
+		mat[0][0] = xScale;
+		mat[1][1] = yScale;
+		mat[2][2] = zfar / (zfar - znear);
+		mat[2][3] = 1.0f;
+		mat[3][2] = (-znear * zfar) / (zfar - znear);
+	}
+
 	void setOrthoLH(float width, float height, float near_plane, float far_plane)
 	{
 		setIdentity();

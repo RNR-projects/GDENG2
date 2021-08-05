@@ -67,34 +67,48 @@ void AppWindow::onRightMouseUp(const Point& mouse_pos)
 	//scale_cube = 1.0f;
 }
 
-void AppWindow::onMouseMove(const Point& delta_mouse_pos)
+void AppWindow::onMouseMove(const Point& mouse_pos)
 {
-	//rot_x -= delta_mouse_pos.y * m_delta_time;
-	//rot_y -= delta_mouse_pos.x * m_delta_time;
+	RECT rc = this->getClientWindowRect();
+	int width = rc.right - rc.left;
+	int height = rc.bottom - rc.top;
+
+	rot_x += (mouse_pos.y - height / 2.0f) * m_delta_time * 0.25f;
+	rot_y += (mouse_pos.x - width / 2.0f) * m_delta_time * 0.25f;
+
+	InputSystem::getInstance()->setCursorPosition(Point(width / 2.0f, height / 2.0f));
 }
 
 void AppWindow::onKeyDown(int key)
 {
 	if (key == 'W')
 	{
-		rot_x += m_delta_time;
+		moveForward = 1.0f;
 	}
 	else if (key == 'S')
 	{
-		rot_x -= m_delta_time;
+		moveForward = -1.0f;
 	}
 	if (key == 'A')
 	{
-		rot_y += m_delta_time;
+		moveRight = -1.0f;
 	}
 	else if (key == 'D')
 	{
-		rot_y -= m_delta_time;
+		moveRight = 1.0f;
 	}
 }
 
 void AppWindow::onKeyUp(int key)
 {
+	if (key == 'W' || key == 'S')
+	{
+		moveForward = 0;
+	}
+	if (key == 'A' || key == 'D')
+	{
+		moveRight = 0;
+	}
 }
 
 AppWindow* AppWindow::getInstance()
@@ -116,7 +130,7 @@ void AppWindow::destroy()
 		sharedInstance->onDestroy();
 }
 
-void AppWindow::updatePosition()
+void AppWindow::update()
 {
 	m_delta_pos += m_delta_time / 10.0f;
 	if (m_delta_pos > 1.0f)
@@ -125,7 +139,6 @@ void AppWindow::updatePosition()
 	m_delta_scale += m_delta_time / 0.5f;
 
 	Matrix4x4 temp;
-	cc.m_world.setScale(Vector3D(scale_cube, scale_cube, scale_cube));
 
 	/*temp.setRotationZ(0.0f);
 	cc.m_world *= temp;
@@ -138,6 +151,29 @@ void AppWindow::updatePosition()
 
 	//quad1->setRotation(Vector3D(rot_x, rot_y, 0));
 
+	cc.m_world.setIdentity();
+
+	Matrix4x4 new_cam;
+	new_cam.setIdentity();
+
+	temp.setIdentity();
+	temp.setRotationX(rot_x);
+	new_cam *= temp;
+	
+	temp.setIdentity();
+	temp.setRotationY(rot_y);
+	new_cam *= temp;
+
+	Vector3D newPos = worldCam.getTranslation() + new_cam.getZDirection() * moveForward * 0.3f + new_cam.getXDirection() * moveRight * 0.3f;
+
+	temp.setTranslation(newPos);
+	new_cam *= temp;
+	
+	worldCam = new_cam;
+	new_cam.invert();
+
+	cc.m_view = new_cam;
+
 	m_cb->update(GraphicsEngine::getInstance()->getImmediateDeviceContext(), &cc);
 }
 
@@ -146,13 +182,17 @@ void AppWindow::onCreate()
 	Window::onCreate();
 
 	InputSystem::getInstance()->addListener(this);
+	InputSystem::getInstance()->showCursor(false);
 
 	cc.m_view.setIdentity();
+	worldCam.setTranslation(Vector3D(0, 0, -2));
 
 	RECT rc = this->getClientWindowRect();
 	int width = rc.right - rc.left;
 	int height = rc.bottom - rc.top;
-	cc.m_proj.setOrthoLH(width / 400.0f, height / 400.0f, -4.0f, 4.0f);
+	//cc.m_proj.setOrthoLH(width / 400.0f, height / 400.0f, -4.0f, 4.0f);
+
+	cc.m_proj.setPerspectiveFovLH(1.57f, (float)width / (float)height, 0.1f, 100.0f);
 }
 
 void AppWindow::onUpdate()
@@ -168,14 +208,14 @@ void AppWindow::onUpdate()
 	int height = rc.bottom - rc.top;
 	GraphicsEngine::getInstance()->getImmediateDeviceContext()->setViewportSize(width, height);
 
-	updatePosition();
+	update();
 
 	for (int i = 0; i < 1; i++)
 	{
 		this->cubes[i]->update(m_delta_time);
 		this->cubes[i]->draw(m_cb);
 	}
-	plane->draw(m_cb);
+	//plane->draw(m_cb);
 	//newQuad->draw(m_cb, EngineTime::getDeltaTime());
 
 	m_swap_chain->present(true);
@@ -217,7 +257,7 @@ void AppWindow::createGraphicsWindow()
 	for (int i = 0; i < 1; i++)
 	{
 		Vector3D loc = Vector3D(rand() % 200 / 100.0f - 1.0f, rand() % 200 / 100.0f - 1.0f, rand() % 200 / 100.0f - 1.0f);
-		Cube* cubey = new Cube("Cube " + i, Vector3D(), Vector3D(0.25f, 0.25f, 0.25f), Vector3D(1, 1, 0), Vector3D());
+		Cube* cubey = new Cube("Cube " + i, Vector3D(), Vector3D(1,1,1), Vector3D(1, 1, 0), Vector3D());
 		this->cubes.push_back(cubey);
 	}
 	plane = new Plane("Plane", Vector3D(0, -0.25f, 0), Vector3D(3, 1, 3), Vector3D(1, 1, 0), Vector3D(0,0,0));

@@ -47,6 +47,15 @@ public:
 
 		return v;
 	}
+	Vector3D operator *(const float& scalar)
+	{
+		Vector3D v;
+		v.x = x * scalar;
+		v.y = y * scalar;
+		v.z = z * scalar;
+
+		return v;
+	}
 	//Beware it uses sqrt which is expensive
 	float getMagnitude()
 	{
