@@ -36,7 +36,7 @@ void InputSystem::update()
 
         while (it != set_listeners.end())
         {
-            (*it)->onMouseMove(Point(current_mouse_pos.x, current_mouse_pos.y));
+            (*it)->onMouseMove(Point(current_mouse_pos.x - old_mouse_pos.x, current_mouse_pos.y - old_mouse_pos.y));
             it++;
         }
     }
@@ -48,25 +48,19 @@ void InputSystem::update()
         {
             if (key_states[i] & 0x80)
             {
-                std::unordered_set<InputListener*>::iterator it = set_listeners.begin();
+                if (key_states[i] != old_key_states[i]) {
+                    std::unordered_set<InputListener*>::iterator it = set_listeners.begin();
 
-                while (it != set_listeners.end())
-                {
-                    if (i == VK_LBUTTON)
+                    while (it != set_listeners.end())
                     {
-                        if (key_states[i] != old_key_states[i])
+                        if (i == VK_LBUTTON)
                             (*it)->onLeftMouseDown(Point(current_mouse_pos.x, current_mouse_pos.y));
-                    } 
-                    else if (i == VK_RBUTTON)
-                    {
-                        if (key_states[i] != old_key_states[i])
+                        else if (i == VK_RBUTTON)
                             (*it)->onRightMouseDown(Point(current_mouse_pos.x, current_mouse_pos.y));
-                    } 
-                    else
-                    {
-                        (*it)->onKeyDown(i);
+                        else
+                            (*it)->onKeyDown(i);
+                        it++;
                     }
-                    it++;
                 }
             }
             else
@@ -110,6 +104,16 @@ void InputSystem::setCursorPosition(const Point& pos)
 void InputSystem::showCursor(bool show)
 {
     ::ShowCursor(show);
+}
+
+bool InputSystem::isKeyDown(int key)
+{
+    return key_states[key] & 0x80;
+}
+
+bool InputSystem::isKeyUp(int key)
+{
+    return !(key_states[key] & 0x80);
 }
 
 InputSystem::InputSystem()

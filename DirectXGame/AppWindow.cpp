@@ -24,12 +24,12 @@ void AppWindow::onLeftMouseDown(const Point& mouse_pos)
 	RECT rc = this->getClientWindowRect();
 	int width = rc.right - rc.left;
 	int height = rc.bottom - rc.top;
-	Vector3D convertedPos = Vector3D((float)point.x / (float)width * 2.0f - 1.0f, -(float)point.y / (float)height * 2.0f + 1.0f, 0.0f);
+	Vector3D convertedPos = Vector3D((float)point.x / (float)width * 2.0f - 1.0f, -(float)point.y / (float)height * 2.0f + 1.0f, 1.0f);
 
 	Matrix4x4 inverseProj(cc.m_proj);
 	inverseProj.invert();
 	Vector3D raycastEye = inverseProj * convertedPos;
-	raycastEye.z = 0;
+	raycastEye.z = 1.0f;
 
 	Matrix4x4 inverseView(cc.m_view);
 	inverseView.invert();
@@ -39,76 +39,66 @@ void AppWindow::onLeftMouseDown(const Point& mouse_pos)
 	std::cout << raycastWorld.x << " " << raycastWorld.y << " " << raycastWorld.z << "\n";
 	//ortho raycast comes from cursor straight forward along z
 	//perspective raycast comes from camera position in the direction of raycast world
-	/*if (quad1->checkRaycast(Vector3D(raycastWorld.x, raycastWorld.y, -4.0f), Vector3D(0, 0, 1)))
+	if (cubes[0]->checkRaycast(Vector3D(raycastWorld.x, raycastWorld.y, -4.0f) + cam->getLocalPosition(), Vector3D(0, 0, 1)))
 	{
 		std::cout << "true \n";
-		quad1->setColors(Vector3D(0, 0, 1));
+		cubes[0]->setColors(Vector3D(0, 0, 1));
 	}
 	else
 	{
 		std::cout << "false \n";
-		quad1->setColors(Vector3D(1, 1, 0));
+		cubes[0]->setColors(Vector3D(1, 1, 0));
+	}
+	/*if (cubes[0]->checkRaycast(cam->getLocalPosition(), raycastWorld))
+	{
+		std::cout << "true \n";
+		cubes[0]->setColors(Vector3D(0, 0, 1));
+	}
+	else
+	{
+		std::cout << "false \n";
+		cubes[0]->setColors(Vector3D(1, 1, 0));
 	}*/
-	//scale_cube = 0.5f;
 }
 
 void AppWindow::onLeftMouseUp(const Point& mouse_pos)
 {
-	//scale_cube = 1.0f;
+	
 }
 
 void AppWindow::onRightMouseDown(const Point& mouse_pos)
 {
-	//scale_cube = 2.0f;
+	
 }
 
 void AppWindow::onRightMouseUp(const Point& mouse_pos)
 {
-	//scale_cube = 1.0f;
+	
 }
 
-void AppWindow::onMouseMove(const Point& mouse_pos)
+void AppWindow::onMouseMove(const Point& delta_mouse_pos)
 {
-	RECT rc = this->getClientWindowRect();
+	/*RECT rc = this->getClientWindowRect();
 	int width = rc.right - rc.left;
 	int height = rc.bottom - rc.top;
 
 	rot_x += (mouse_pos.y - height / 2.0f) * m_delta_time * 0.25f;
 	rot_y += (mouse_pos.x - width / 2.0f) * m_delta_time * 0.25f;
 
-	InputSystem::getInstance()->setCursorPosition(Point(width / 2.0f, height / 2.0f));
+	InputSystem::getInstance()->setCursorPosition(Point(width / 2.0f, height / 2.0f));*/
 }
 
 void AppWindow::onKeyDown(int key)
 {
-	if (key == 'W')
+	if (key == VK_ESCAPE)
 	{
-		moveForward = 1.0f;
-	}
-	else if (key == 'S')
-	{
-		moveForward = -1.0f;
-	}
-	if (key == 'A')
-	{
-		moveRight = -1.0f;
-	}
-	else if (key == 'D')
-	{
-		moveRight = 1.0f;
+		
 	}
 }
 
 void AppWindow::onKeyUp(int key)
 {
-	if (key == 'W' || key == 'S')
-	{
-		moveForward = 0;
-	}
-	if (key == 'A' || key == 'D')
-	{
-		moveRight = 0;
-	}
+
 }
 
 AppWindow* AppWindow::getInstance()
@@ -140,20 +130,9 @@ void AppWindow::update()
 
 	Matrix4x4 temp;
 
-	/*temp.setRotationZ(0.0f);
-	cc.m_world *= temp;
-	
-	temp.setRotationY(rot_y);
-	cc.m_world *= temp;
-	
-	temp.setRotationX(rot_x);
-	cc.m_world *= temp;*/
-
-	//quad1->setRotation(Vector3D(rot_x, rot_y, 0));
-
 	cc.m_world.setIdentity();
 
-	Matrix4x4 new_cam;
+	/*Matrix4x4 new_cam;
 	new_cam.setIdentity();
 
 	temp.setIdentity();
@@ -170,9 +149,11 @@ void AppWindow::update()
 	new_cam *= temp;
 	
 	worldCam = new_cam;
-	new_cam.invert();
+	new_cam.invert();*/
 
-	cc.m_view = new_cam;
+	cam->update(m_delta_time);
+
+	cc.m_view = cam->getViewMatrix();
 
 	m_cb->update(GraphicsEngine::getInstance()->getImmediateDeviceContext(), &cc);
 }
@@ -182,17 +163,18 @@ void AppWindow::onCreate()
 	Window::onCreate();
 
 	InputSystem::getInstance()->addListener(this);
-	InputSystem::getInstance()->showCursor(false);
+	//InputSystem::getInstance()->showCursor(false);
 
 	cc.m_view.setIdentity();
-	worldCam.setTranslation(Vector3D(0, 0, -2));
+	cam = new Camera("Camera");
+	cam->setPosition(0, 0, 0);
 
 	RECT rc = this->getClientWindowRect();
 	int width = rc.right - rc.left;
 	int height = rc.bottom - rc.top;
-	//cc.m_proj.setOrthoLH(width / 400.0f, height / 400.0f, -4.0f, 4.0f);
+	cc.m_proj.setOrthoLH(width / 400.0f, height / 400.0f, -4.0f, 4.0f);
 
-	cc.m_proj.setPerspectiveFovLH(1.57f, (float)width / (float)height, 0.1f, 100.0f);
+	//cc.m_proj.setPerspectiveFovLH(1.57f, (float)width / (float)height, 0.1f, 100.0f);
 }
 
 void AppWindow::onUpdate()
