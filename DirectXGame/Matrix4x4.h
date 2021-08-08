@@ -158,8 +158,6 @@ public:
 
 	void setPerspectiveFovLH(float fov, float aspect, float znear, float zfar)
 	{
-		setIdentity();
-
 		float yScale = 1.0f / tanf(fov / 2.0f);
 		float xScale = yScale / aspect;
 		mat[0][0] = xScale;

@@ -34,9 +34,7 @@ void AppWindow::onLeftMouseDown(const Point& mouse_pos)
 	Vector3D raycastWorld;
 	if (isPerspective)
 	{
-		Matrix4x4 inverseView(cc.m_view);
-		inverseView.invert();
-		raycastWorld = inverseView * raycastEye;
+		raycastWorld = Quaternion::rotatePointEuler(raycastEye, cam->getLocalRotation());
 		raycastWorld.normalize();//normalize if we want direction vector for perspective raycast
 	}
 	else
@@ -48,7 +46,7 @@ void AppWindow::onLeftMouseDown(const Point& mouse_pos)
 	//ortho raycast comes from cursor straight forward along z
 	//perspective raycast comes from camera position in the direction of raycast world
 	if (!isPerspective) {
-		if (cubes[0]->checkRaycast(raycastWorld + cam->getLocalPosition() + cam->getForwardVector() * (-4.0f), cam->getForwardVector()))
+		if (cubes[0]->checkRaycast(raycastWorld + cam->getLocalPosition() + cam->getForwardVector() * (orthoNearPlane), cam->getForwardVector()))
 		{
 			std::cout << "true \n";
 			cubes[0]->setColors(Vector3D(0, 0, 1));
@@ -179,13 +177,13 @@ void AppWindow::onCreate()
 
 	cc.m_view.setIdentity();
 	cam = new Camera("Camera");
-	cam->setPosition(0, 0, 0);
+	cam->setPosition(0, 0, -2);
 
 	RECT rc = this->getClientWindowRect();
 	int width = rc.right - rc.left;
 	int height = rc.bottom - rc.top;
 	if (!isPerspective)
-		cc.m_proj.setOrthoLH(width / 400.0f, height / 400.0f, -4.0f, 4.0f);
+		cc.m_proj.setOrthoLH(width / 400.0f, height / 400.0f, orthoNearPlane, 4.0f);
 	else
 		cc.m_proj.setPerspectiveFovLH(1.57f, (float)width / (float)height, 0.1f, 100.0f);
 }
