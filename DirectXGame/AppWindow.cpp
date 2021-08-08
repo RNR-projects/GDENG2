@@ -31,34 +31,46 @@ void AppWindow::onLeftMouseDown(const Point& mouse_pos)
 	Vector3D raycastEye = inverseProj * convertedPos;
 	raycastEye.z = 1.0f;
 
-	Matrix4x4 inverseView(cc.m_view);
-	inverseView.invert();
-	Vector3D raycastWorld = inverseView * raycastEye;
-	//raycastWorld.normalize();//normalize if we want direction vector for perspective raycast
+	Vector3D raycastWorld;
+	if (isPerspective)
+	{
+		Matrix4x4 inverseView(cc.m_view);
+		inverseView.invert();
+		raycastWorld = inverseView * raycastEye;
+		raycastWorld.normalize();//normalize if we want direction vector for perspective raycast
+	}
+	else
+	{
+		raycastWorld = Quaternion::rotatePointEuler(raycastEye, cam->getLocalRotation());
+	}
 
 	std::cout << raycastWorld.x << " " << raycastWorld.y << " " << raycastWorld.z << "\n";
 	//ortho raycast comes from cursor straight forward along z
 	//perspective raycast comes from camera position in the direction of raycast world
-	if (cubes[0]->checkRaycast(Vector3D(raycastWorld.x, raycastWorld.y, -4.0f) + cam->getLocalPosition(), Vector3D(0, 0, 1)))
-	{
-		std::cout << "true \n";
-		cubes[0]->setColors(Vector3D(0, 0, 1));
+	if (!isPerspective) {
+		if (cubes[0]->checkRaycast(raycastWorld + cam->getLocalPosition() + cam->getForwardVector() * (-4.0f), cam->getForwardVector()))
+		{
+			std::cout << "true \n";
+			cubes[0]->setColors(Vector3D(0, 0, 1));
+		}
+		else
+		{
+			std::cout << "false \n";
+			cubes[0]->setColors(Vector3D(1, 1, 0));
+		}
 	}
-	else
-	{
-		std::cout << "false \n";
-		cubes[0]->setColors(Vector3D(1, 1, 0));
+	else {
+		if (cubes[0]->checkRaycast(cam->getLocalPosition(), raycastWorld))
+		{
+			std::cout << "true \n";
+			cubes[0]->setColors(Vector3D(0, 0, 1));
+		}
+		else
+		{
+			std::cout << "false \n";
+			cubes[0]->setColors(Vector3D(1, 1, 0));
+		}
 	}
-	/*if (cubes[0]->checkRaycast(cam->getLocalPosition(), raycastWorld))
-	{
-		std::cout << "true \n";
-		cubes[0]->setColors(Vector3D(0, 0, 1));
-	}
-	else
-	{
-		std::cout << "false \n";
-		cubes[0]->setColors(Vector3D(1, 1, 0));
-	}*/
 }
 
 void AppWindow::onLeftMouseUp(const Point& mouse_pos)
@@ -172,9 +184,10 @@ void AppWindow::onCreate()
 	RECT rc = this->getClientWindowRect();
 	int width = rc.right - rc.left;
 	int height = rc.bottom - rc.top;
-	cc.m_proj.setOrthoLH(width / 400.0f, height / 400.0f, -4.0f, 4.0f);
-
-	//cc.m_proj.setPerspectiveFovLH(1.57f, (float)width / (float)height, 0.1f, 100.0f);
+	if (!isPerspective)
+		cc.m_proj.setOrthoLH(width / 400.0f, height / 400.0f, -4.0f, 4.0f);
+	else
+		cc.m_proj.setPerspectiveFovLH(1.57f, (float)width / (float)height, 0.1f, 100.0f);
 }
 
 void AppWindow::onUpdate()

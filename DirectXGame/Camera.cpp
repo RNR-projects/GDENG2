@@ -4,6 +4,7 @@
 Camera::Camera(std::string name) : AGameObject(name)
 {
 	InputSystem::getInstance()->addListener(this);
+	viewMatrix.setIdentity();
 }
 
 Camera::~Camera()
@@ -122,4 +123,9 @@ void Camera::onRightMouseDown(const Point& mouse_pos)
 void Camera::onRightMouseUp(const Point& mouse_pos)
 {
 	adjustingCam = false;
+}
+
+Vector3D Camera::getForwardVector()
+{
+	return viewMatrix.getZDirection();
 }

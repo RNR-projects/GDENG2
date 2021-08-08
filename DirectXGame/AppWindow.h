@@ -69,5 +69,7 @@ private:
 	
 	float m_delta_pos;
 	float m_delta_scale;
+
+	bool isPerspective = false;
 };
 

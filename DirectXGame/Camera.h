@@ -23,6 +23,8 @@ public:
 	virtual void onRightMouseDown(const Point& mouse_pos) override;
 	virtual void onRightMouseUp(const Point& mouse_pos) override;
 
+	Vector3D getForwardVector();
+
 private:
 	virtual void updateVertexLocations() override;
 
