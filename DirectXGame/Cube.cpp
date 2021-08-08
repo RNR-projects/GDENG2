@@ -42,17 +42,18 @@ Cube::Cube(std::string name, Vector3D pos, Vector3D scale, Vector3D color, Vecto
 	size_t size_shader = 0;
 	graphEngine->compileVertexShader(L"VertexShader.hlsl", "vsmain", &shader_byte_code, &size_shader);
 
+	Vector3D* worldLocations = getVertexWorldPositions();
 
 	vertex list[] = {
-		{ edges[0] + this->localPosition,		this->colors },
-		{ edges[1] + this->localPosition,		this->colors },
-		{ edges[2] + this->localPosition,		this->colors },
-		{ edges[3] + this->localPosition,		this->colors },
+		{ worldLocations[0],	this->colors },
+		{ worldLocations[1],	this->colors },
+		{ worldLocations[2],	this->colors },
+		{ worldLocations[3],	this->colors },
 
-		{ edges[4] + this->localPosition,		this->colors },
-		{ edges[5] + this->localPosition,		this->colors },
-		{ edges[6] + this->localPosition,		this->colors },
-		{ edges[7] + this->localPosition,		this->colors },
+		{ worldLocations[4],	this->colors },
+		{ worldLocations[5],	this->colors },
+		{ worldLocations[6],	this->colors },
+		{ worldLocations[7],	this->colors },
 	};
 
 	m_vb = GraphicsEngine::getInstance()->createVertexBuffer();

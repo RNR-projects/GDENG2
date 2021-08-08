@@ -23,10 +23,10 @@ public:
 	static Quaternion eulerToQuaternion(const Vector3D& vector)
 	{
 		Quaternion quaternion;
-		quaternion.q = cos(vector.x / 2) * cos(vector.y / 2) * cos(vector.z / 2) + sin(vector.x / 2) * sin(vector.y / 2) * sin(vector.z / 2);
-		quaternion.i = sin(vector.x / 2) * cos(vector.y / 2) * cos(vector.z / 2) - cos(vector.x / 2) * sin(vector.y / 2) * sin(vector.z / 2);
-		quaternion.j = cos(vector.x / 2) * sin(vector.y / 2) * cos(vector.z / 2) + sin(vector.x / 2) * cos(vector.y / 2) * sin(vector.z / 2);
-		quaternion.k = cos(vector.x / 2) * cos(vector.y / 2) * sin(vector.z / 2) - sin(vector.x / 2) * sin(vector.y / 2) * cos(vector.z / 2);
+		quaternion.q = cos(vector.x / 2.0f) * cos(vector.y / 2.0f) * cos(vector.z / 2.0f) + sin(vector.x / 2.0f) * sin(vector.y / 2.0f) * sin(vector.z / 2.0f);
+		quaternion.i = sin(vector.x / 2.0f) * cos(vector.y / 2.0f) * cos(vector.z / 2.0f) - cos(vector.x / 2.0f) * sin(vector.y / 2.0f) * sin(vector.z / 2.0f);
+		quaternion.j = cos(vector.x / 2.0f) * sin(vector.y / 2.0f) * cos(vector.z / 2.0f) + sin(vector.x / 2.0f) * cos(vector.y / 2.0f) * sin(vector.z / 2.0f);
+		quaternion.k = cos(vector.x / 2.0f) * cos(vector.y / 2.0f) * sin(vector.z / 2.0f) - sin(vector.x / 2.0f) * sin(vector.y / 2.0f) * cos(vector.z / 2.0f);
 
 		return quaternion;
 	}

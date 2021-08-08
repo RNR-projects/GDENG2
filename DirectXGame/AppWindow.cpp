@@ -42,31 +42,34 @@ void AppWindow::onLeftMouseDown(const Point& mouse_pos)
 		raycastWorld = Quaternion::rotatePointEuler(raycastEye, cam->getLocalRotation());
 	}
 
-	std::cout << raycastWorld.x << " " << raycastWorld.y << " " << raycastWorld.z << "\n";
+	//std::cout << raycastWorld.x << " " << raycastWorld.y << " " << raycastWorld.z << "\n";
 	//ortho raycast comes from cursor straight forward along z
 	//perspective raycast comes from camera position in the direction of raycast world
-	if (!isPerspective) {
-		if (cubes[0]->checkRaycast(raycastWorld + cam->getLocalPosition() + cam->getForwardVector() * (orthoNearPlane), cam->getForwardVector()))
-		{
-			std::cout << "true \n";
-			cubes[0]->setColors(Vector3D(0, 0, 1));
+	for (int i = 0; i < cubes.size(); i++)
+	{
+		if (!isPerspective) {
+			if (cubes[i]->checkRaycast(raycastWorld + cam->getLocalPosition() + cam->getForwardVector() * (orthoNearPlane), cam->getForwardVector()))
+			{
+				std::cout << "true \n";
+				cubes[i]->setColors(Vector3D(0, 0, 1));
+			}
+			else
+			{
+				std::cout << "false \n";
+				cubes[i]->setColors(Vector3D(1, 1, 0));
+			}
 		}
-		else
-		{
-			std::cout << "false \n";
-			cubes[0]->setColors(Vector3D(1, 1, 0));
-		}
-	}
-	else {
-		if (cubes[0]->checkRaycast(cam->getLocalPosition(), raycastWorld))
-		{
-			std::cout << "true \n";
-			cubes[0]->setColors(Vector3D(0, 0, 1));
-		}
-		else
-		{
-			std::cout << "false \n";
-			cubes[0]->setColors(Vector3D(1, 1, 0));
+		else {
+			if (cubes[i]->checkRaycast(cam->getLocalPosition(), raycastWorld))
+			{
+				std::cout << "true \n";
+				cubes[i]->setColors(Vector3D(0, 0, 1));
+			}
+			else
+			{
+				std::cout << "false \n";
+				cubes[i]->setColors(Vector3D(1, 1, 0));
+			}
 		}
 	}
 }
@@ -203,12 +206,12 @@ void AppWindow::onUpdate()
 
 	update();
 
-	for (int i = 0; i < 1; i++)
+	for (int i = 0; i < cubes.size(); i++)
 	{
 		this->cubes[i]->update(m_delta_time);
 		this->cubes[i]->draw(m_cb);
 	}
-	//plane->draw(m_cb);
+	plane->draw(m_cb);
 	//newQuad->draw(m_cb, EngineTime::getDeltaTime());
 
 	m_swap_chain->present(true);
@@ -250,7 +253,7 @@ void AppWindow::createGraphicsWindow()
 	for (int i = 0; i < 1; i++)
 	{
 		Vector3D loc = Vector3D(rand() % 200 / 100.0f - 1.0f, rand() % 200 / 100.0f - 1.0f, rand() % 200 / 100.0f - 1.0f);
-		Cube* cubey = new Cube("Cube " + i, Vector3D(), Vector3D(1,1,1), Vector3D(1, 1, 0), Vector3D());
+		Cube* cubey = new Cube("Cube " + i, Vector3D(0, 2, 0), Vector3D(1,1,1), Vector3D(0, 1, 1), Vector3D(0.79f,0.79f,0));
 		this->cubes.push_back(cubey);
 	}
 	plane = new Plane("Plane", Vector3D(0, -0.25f, 0), Vector3D(3, 1, 3), Vector3D(1, 1, 0), Vector3D(0,0,0));
