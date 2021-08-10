@@ -22,7 +22,7 @@ public:
 
 	Vector3D* getVertexWorldPositions();
 
-	bool checkRaycast(Vector3D rayOrigin, Vector3D rayDirection);
+	float checkRaycast(Vector3D rayOrigin, Vector3D rayDirection);
 
 private:
 	virtual void updateVertexLocations() override;

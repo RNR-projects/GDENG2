@@ -42,41 +42,39 @@ void AppWindow::onLeftMouseDown(const Point& mouse_pos)
 		raycastWorld = Quaternion::rotatePointEuler(raycastEye, cam->getLocalRotation());
 	}
 
-	//std::cout << raycastWorld.x << " " << raycastWorld.y << " " << raycastWorld.z << "\n";
+	//find if any object collides with the raycast and get the one that is the closest to the raycast origin
+	float minT = INT_MAX;
+	int minIndex = -1;
+	float t;
 	//ortho raycast comes from cursor straight forward along z
 	//perspective raycast comes from camera position in the direction of raycast world
 	for (int i = 0; i < cubes.size(); i++)
 	{
-		if (!isPerspective) {
-			if (cubes[i]->checkRaycast(raycastWorld + cam->getLocalPosition() + cam->getForwardVector() * (orthoNearPlane), cam->getForwardVector()))
+		if (!isPerspective) 
+			t = cubes[i]->checkRaycast(raycastWorld + cam->getLocalPosition() + cam->getForwardVector() * (orthoNearPlane), cam->getForwardVector());
+		else 
+			t = cubes[i]->checkRaycast(cam->getLocalPosition(), raycastWorld);
+
+		if (t != -9999)
+		{
+			if (t < minT)
 			{
-				std::cout << "true \n";
-				cubes[i]->setColors(Vector3D(0, 0, 1));
-			}
-			else
-			{
-				std::cout << "false \n";
-				cubes[i]->setColors(Vector3D(1, 1, 0));
-			}
-		}
-		else {
-			if (cubes[i]->checkRaycast(cam->getLocalPosition(), raycastWorld))
-			{
-				std::cout << "true \n";
-				cubes[i]->setColors(Vector3D(0, 0, 1));
-			}
-			else
-			{
-				std::cout << "false \n";
-				cubes[i]->setColors(Vector3D(1, 1, 0));
+				minT = t;
+				minIndex = i;
+				//cubes[i]->setColors(Vector3D(0, 0, 1));
 			}
 		}
+	}
+
+	if (minIndex != -1)
+	{
+		selectedCube = cubes[minIndex];
 	}
 }
 
 void AppWindow::onLeftMouseUp(const Point& mouse_pos)
 {
-	
+	selectedCube = nullptr;
 }
 
 void AppWindow::onRightMouseDown(const Point& mouse_pos)
@@ -99,6 +97,14 @@ void AppWindow::onMouseMove(const Point& delta_mouse_pos)
 	rot_y += (mouse_pos.x - width / 2.0f) * m_delta_time * 0.25f;
 
 	InputSystem::getInstance()->setCursorPosition(Point(width / 2.0f, height / 2.0f));*/
+	if (selectedCube != nullptr)
+	{
+		Vector3D cubePos = selectedCube->getLocalPosition();
+		Matrix4x4 viewMat = cam->getViewMatrix();
+		Vector3D newPos = cubePos + viewMat.getXDirection() * delta_mouse_pos.x * 0.5f * m_delta_time - 
+							viewMat.getYDirection() * delta_mouse_pos.y * 0.5f * m_delta_time;
+		selectedCube->setPosition(newPos);
+	}
 }
 
 void AppWindow::onKeyDown(int key)
@@ -167,6 +173,7 @@ void AppWindow::update()
 	cam->update(m_delta_time);
 
 	cc.m_view = cam->getViewMatrix();
+	cc.m_view.invert();
 
 	m_cb->update(GraphicsEngine::getInstance()->getImmediateDeviceContext(), &cc);
 }
@@ -211,7 +218,7 @@ void AppWindow::onUpdate()
 		this->cubes[i]->update(m_delta_time);
 		this->cubes[i]->draw(m_cb);
 	}
-	plane->draw(m_cb);
+	//plane->draw(m_cb);
 	//newQuad->draw(m_cb, EngineTime::getDeltaTime());
 
 	m_swap_chain->present(true);
@@ -250,13 +257,13 @@ void AppWindow::createGraphicsWindow()
 	int height = rc.bottom - rc.top;
 
 	m_swap_chain->init(this->m_hwnd, width, height);
-	for (int i = 0; i < 1; i++)
+	for (int i = 0; i < 3; i++)
 	{
 		Vector3D loc = Vector3D(rand() % 200 / 100.0f - 1.0f, rand() % 200 / 100.0f - 1.0f, rand() % 200 / 100.0f - 1.0f);
-		Cube* cubey = new Cube("Cube " + i, Vector3D(0, 2, 0), Vector3D(1,1,1), Vector3D(0, 1, 1), Vector3D(0.79f,0.79f,0));
+		Cube* cubey = new Cube("Cube " + i, loc, Vector3D(1,1,1), Vector3D(0, 1, 1), Vector3D());
 		this->cubes.push_back(cubey);
 	}
-	plane = new Plane("Plane", Vector3D(0, -0.25f, 0), Vector3D(3, 1, 3), Vector3D(1, 1, 0), Vector3D(0,0,0));
+	//plane = new Plane("Plane", Vector3D(0, -0.25f, 0), Vector3D(3, 1, 3), Vector3D(1, 1, 0), Vector3D(0,0,0));
 	//newQuad = new AnimatedQuad();
 
 

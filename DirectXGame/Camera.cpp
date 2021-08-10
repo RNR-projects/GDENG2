@@ -40,7 +40,7 @@ Matrix4x4 Camera::getViewMatrix()
 	worldCam *= temp;
 
 	viewMatrix = worldCam;
-	worldCam.invert();
+	//worldCam.invert();
 
 	return worldCam;
 }

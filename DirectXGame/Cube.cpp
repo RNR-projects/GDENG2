@@ -208,7 +208,7 @@ Vector3D* Cube::getVertexWorldPositions()
 	return worldLocations;
 }
 
-bool Cube::checkRaycast(Vector3D rayOrigin, Vector3D rayDirection)
+float Cube::checkRaycast(Vector3D rayOrigin, Vector3D rayDirection)
 {
 	return collisionBox->checkRaycast(rayOrigin, rayDirection);
 }

@@ -36,7 +36,7 @@ void BoundingBox::setRotation(Vector3D newRotation)
     updateEdges();
 }
 
-bool BoundingBox::checkRaycast(Vector3D rayOrigin, Vector3D rayDirection)
+float BoundingBox::checkRaycast(Vector3D rayOrigin, Vector3D rayDirection)
 {
     //get reverse rotation direction for converting
     Quaternion reverseRotation = Quaternion::eulerToQuaternion(rotation);
@@ -58,7 +58,7 @@ bool BoundingBox::checkRaycast(Vector3D rayOrigin, Vector3D rayDirection)
             //check if the intersection point is inside the face quadrilateral
             if (possibleLocation.y <= height / 2.0f && possibleLocation.y >= -height / 2.0f)
                 if (possibleLocation.z <= depth / 2.0f && possibleLocation.z >= -depth / 2.0f)
-                    return true;
+                    return t;
         }
     }
     //face 2
@@ -71,7 +71,7 @@ bool BoundingBox::checkRaycast(Vector3D rayOrigin, Vector3D rayDirection)
             Vector3D possibleLocation(0, convertedOrigin.y + convertedDirection.y * t, convertedOrigin.z + convertedDirection.z * t);
             if (possibleLocation.y <= height / 2.0f && possibleLocation.y >= -height / 2.0f)
                 if (possibleLocation.z <= depth / 2.0f && possibleLocation.z >= -depth / 2.0f)
-                    return true;
+                    return t;
         }
     }
     //face 3
@@ -84,7 +84,7 @@ bool BoundingBox::checkRaycast(Vector3D rayOrigin, Vector3D rayDirection)
             Vector3D possibleLocation(convertedOrigin.x + convertedDirection.x * t, 0, convertedOrigin.z + convertedDirection.z * t);
             if (possibleLocation.x <= width / 2.0f && possibleLocation.x >= -width / 2.0f)
                 if (possibleLocation.z <= depth / 2.0f && possibleLocation.z >= -depth / 2.0f)
-                    return true;
+                    return t;
         }
     }
     //face 4
@@ -97,7 +97,7 @@ bool BoundingBox::checkRaycast(Vector3D rayOrigin, Vector3D rayDirection)
             Vector3D possibleLocation(convertedOrigin.x + convertedDirection.x * t, 0, convertedOrigin.z + convertedDirection.z * t);
             if (possibleLocation.x <= width / 2.0f && possibleLocation.x >= -width / 2.0f)
                 if (possibleLocation.z <= depth / 2.0f && possibleLocation.z >= -depth / 2.0f)
-                    return true;
+                    return t;
         }
     }
     //face 5
@@ -110,7 +110,7 @@ bool BoundingBox::checkRaycast(Vector3D rayOrigin, Vector3D rayDirection)
             Vector3D possibleLocation(convertedOrigin.x + convertedDirection.x * t, convertedOrigin.y + convertedDirection.y * t, 0);
             if (possibleLocation.x <= width / 2.0f && possibleLocation.x >= -width / 2.0f)
                 if (possibleLocation.y <= height / 2.0f && possibleLocation.y >= -height / 2.0f)
-                    return true;
+                    return t;
         }
     }
     //face 6
@@ -123,11 +123,11 @@ bool BoundingBox::checkRaycast(Vector3D rayOrigin, Vector3D rayDirection)
             Vector3D possibleLocation(convertedOrigin.x + convertedDirection.x * t, convertedOrigin.y + convertedDirection.y * t, 0);
             if (possibleLocation.x <= width / 2.0f && possibleLocation.x >= -width / 2.0f)
                 if (possibleLocation.y <= height / 2.0f && possibleLocation.y >= -height / 2.0f)
-                    return true;
+                    return t;
         }
     }
 
-    return false;
+    return -9999;
 }
 
 void BoundingBox::updateEdges()

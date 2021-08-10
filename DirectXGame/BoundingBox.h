@@ -11,7 +11,7 @@ public:
 	void setDimensions(float newWidth, float newHeight, float newDepth);
 	void setRotation(Vector3D newRotation);
 
-	bool checkRaycast(Vector3D rayOrigin, Vector3D rayDirection);
+	float checkRaycast(Vector3D rayOrigin, Vector3D rayDirection);
 
 private:
 	void updateEdges();

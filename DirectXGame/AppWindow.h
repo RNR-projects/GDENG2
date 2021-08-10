@@ -72,5 +72,7 @@ private:
 
 	bool isPerspective = true;
 	float orthoNearPlane = -4.0f;
+
+	Cube* selectedCube = nullptr;
 };
 
