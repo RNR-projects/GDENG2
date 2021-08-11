@@ -12,6 +12,7 @@
 #include "AnimatedQuad.h"
 #include <vector>
 #include "Plane.h"
+#include "Camera.h"
 
 class AppWindow : public Window, public InputListener
 {
@@ -35,7 +36,7 @@ public:
 	virtual void onKeyDown(int key) override;
 	virtual void onKeyUp(int key) override;
 
-	virtual void onMouseMove(const Point& mouse_pos) override;
+	virtual void onMouseMove(const Point& delta_mouse_pos) override;
 	virtual void onLeftMouseDown(const Point& delta_mouse_pos) override;
 	virtual void onLeftMouseUp(const Point& delta_mouse_pos) override;
 	virtual void onRightMouseDown(const Point& delta_mouse_pos) override;
@@ -56,6 +57,8 @@ private:
 
 	constant cc;
 
+	Camera* cam;
+
 	std::vector<Cube*> cubes;
 	AnimatedQuad* newQuad;
 	Plane* plane;
@@ -67,11 +70,9 @@ private:
 	float m_delta_pos;
 	float m_delta_scale;
 
-	float rot_x = 0;
-	float rot_y = 0;
+	bool isPerspective = true;
+	float orthoNearPlane = -4.0f;
 
-	float moveForward = 0.0f;
-	float moveRight = 0.0f;
-	Matrix4x4 worldCam;
+	Cube* selectedCube = nullptr;
 };
 

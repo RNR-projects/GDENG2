@@ -1,5 +1,4 @@
 #include "BoundingSphere.h"
-#include <iostream>
 
 BoundingSphere::BoundingSphere(Vector3D pos, float radius)
 {
@@ -21,7 +20,7 @@ void BoundingSphere::setRadius(float newRadius)
     this->radius = newRadius;
 }
 
-bool BoundingSphere::checkRaycast(Vector3D rayOrigin, Vector3D rayDirection)
+float BoundingSphere::checkRaycast(Vector3D rayOrigin, Vector3D rayDirection)
 {
     //using equation (dist between center and rayOrigin) = radius
     float xDist = rayOrigin.x - this->position.x;
@@ -38,11 +37,17 @@ bool BoundingSphere::checkRaycast(Vector3D rayOrigin, Vector3D rayDirection)
     {
         float t1 = (-b + sqrtf(b * b - 4.0f * a * c)) / (2 * a);
         float t2 = (-b - sqrtf(b * b - 4.0f * a * c)) / (2 * a);
-        std::cout << t1 << " " << t2 << "\n";
         //check if both are negative meaning miss, else return true
         if (t1 < 0 && t2 < 0)
-            return false;
-        else
-            return true;
+            return -9999;
+        else 
+        {
+            if (t1 >= 0 && t2 >= 0)
+                return fminf(t1, t2);
+            else if (t1 < 0)
+                return t2;
+            else
+                return t1;
+        }
     }
 }

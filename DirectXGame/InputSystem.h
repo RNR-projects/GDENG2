@@ -17,6 +17,9 @@ public:
 	void setCursorPosition(const Point& pos);
 	void showCursor(bool show);
 
+	bool isKeyDown(int key);
+	bool isKeyUp(int key);
+
 private:
 	InputSystem();
 	~InputSystem();

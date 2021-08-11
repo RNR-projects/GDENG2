@@ -36,18 +36,19 @@ void BoundingBox::setRotation(Vector3D newRotation)
     updateEdges();
 }
 
-bool BoundingBox::checkRaycast(Vector3D rayOrigin, Vector3D rayDirection)
+float BoundingBox::checkRaycast(Vector3D rayOrigin, Vector3D rayDirection)
 {
     //get reverse rotation direction for converting
-    Vector3D reverseRotation = Vector3D(-rotation.x, -rotation.y, -rotation.z);
+    Quaternion reverseRotation = Quaternion::eulerToQuaternion(rotation);
+    reverseRotation.invert();
+    //convert ray direction and origin to object space
+    Vector3D convertedOrigin = Quaternion::rotatePointQuaternion(rayOrigin - this->position, reverseRotation);
+    Vector3D convertedDirection = Quaternion::rotatePointQuaternion(rayDirection, reverseRotation);
     //face 1
     //check if ray is perpendicular with face normal
     float dot = Vector3D::dotProduct(rayDirection, facePoints[0]);
     if (dot != 0)
     {
-        //convert ray direction and origin to object space
-        Vector3D convertedOrigin = Quaternion::rotatePointEuler(rayOrigin - this->position, reverseRotation);
-        Vector3D convertedDirection = Quaternion::rotatePointEuler(rayDirection, reverseRotation);
         //get the scalar where the ray's x component intersects with the plane's x component and possibly the plane itself
         float t = (-convertedOrigin.x - width / 2.0f) / convertedDirection.x;
         //if negative then the face in behind the camera and not actually being aimed at
@@ -57,91 +58,76 @@ bool BoundingBox::checkRaycast(Vector3D rayOrigin, Vector3D rayDirection)
             //check if the intersection point is inside the face quadrilateral
             if (possibleLocation.y <= height / 2.0f && possibleLocation.y >= -height / 2.0f)
                 if (possibleLocation.z <= depth / 2.0f && possibleLocation.z >= -depth / 2.0f)
-                    return true;
+                    return t;
         }
     }
     //face 2
     dot = Vector3D::dotProduct(rayDirection, facePoints[1]);
     if (dot != 0)
     {
-        Vector3D convertedOrigin = Quaternion::rotatePointEuler(rayOrigin - this->position, reverseRotation);
-        Vector3D convertedDirection = Quaternion::rotatePointEuler(rayDirection, reverseRotation);
-
         float t = (-convertedOrigin.x + width / 2.0f) / convertedDirection.x;
         if (t >= 0)
         {
             Vector3D possibleLocation(0, convertedOrigin.y + convertedDirection.y * t, convertedOrigin.z + convertedDirection.z * t);
             if (possibleLocation.y <= height / 2.0f && possibleLocation.y >= -height / 2.0f)
                 if (possibleLocation.z <= depth / 2.0f && possibleLocation.z >= -depth / 2.0f)
-                    return true;
+                    return t;
         }
     }
     //face 3
     dot = Vector3D::dotProduct(rayDirection, facePoints[2]);
     if (dot != 0)
     {
-        Vector3D convertedOrigin = Quaternion::rotatePointEuler(rayOrigin - this->position, reverseRotation);
-        Vector3D convertedDirection = Quaternion::rotatePointEuler(rayDirection, reverseRotation);
-
         float t = (-convertedOrigin.y - height / 2.0f) / convertedDirection.y;
         if (t >= 0)
         {
             Vector3D possibleLocation(convertedOrigin.x + convertedDirection.x * t, 0, convertedOrigin.z + convertedDirection.z * t);
             if (possibleLocation.x <= width / 2.0f && possibleLocation.x >= -width / 2.0f)
                 if (possibleLocation.z <= depth / 2.0f && possibleLocation.z >= -depth / 2.0f)
-                    return true;
+                    return t;
         }
     }
     //face 4
     dot = Vector3D::dotProduct(rayDirection, facePoints[3]);
     if (dot != 0)
     {
-        Vector3D convertedOrigin = Quaternion::rotatePointEuler(rayOrigin - this->position, reverseRotation);
-        Vector3D convertedDirection = Quaternion::rotatePointEuler(rayDirection, reverseRotation);
-
         float t = (-convertedOrigin.y + height / 2.0f) / convertedDirection.y;
         if (t >= 0)
         {
             Vector3D possibleLocation(convertedOrigin.x + convertedDirection.x * t, 0, convertedOrigin.z + convertedDirection.z * t);
             if (possibleLocation.x <= width / 2.0f && possibleLocation.x >= -width / 2.0f)
                 if (possibleLocation.z <= depth / 2.0f && possibleLocation.z >= -depth / 2.0f)
-                    return true;
+                    return t;
         }
     }
     //face 5
     dot = Vector3D::dotProduct(rayDirection, facePoints[4]);
     if (dot != 0)
     {
-        Vector3D convertedOrigin = Quaternion::rotatePointEuler(rayOrigin - this->position, reverseRotation);
-        Vector3D convertedDirection = Quaternion::rotatePointEuler(rayDirection, reverseRotation);
-
         float t = (-convertedOrigin.z - depth / 2.0f) / convertedDirection.z;
         if (t >= 0)
         {
             Vector3D possibleLocation(convertedOrigin.x + convertedDirection.x * t, convertedOrigin.y + convertedDirection.y * t, 0);
             if (possibleLocation.x <= width / 2.0f && possibleLocation.x >= -width / 2.0f)
                 if (possibleLocation.y <= height / 2.0f && possibleLocation.y >= -height / 2.0f)
-                    return true;
+                    return t;
         }
     }
     //face 6
     dot = Vector3D::dotProduct(rayDirection, facePoints[5]);
     if (dot != 0)
     {
-        Vector3D convertedOrigin = Quaternion::rotatePointEuler(rayOrigin - this->position, reverseRotation);
-        Vector3D convertedDirection = Quaternion::rotatePointEuler(rayDirection, reverseRotation);
-
         float t = (-convertedOrigin.z + depth / 2.0f) / convertedDirection.z;
         if (t >= 0)
         {
             Vector3D possibleLocation(convertedOrigin.x + convertedDirection.x * t, convertedOrigin.y + convertedDirection.y * t, 0);
             if (possibleLocation.x <= width / 2.0f && possibleLocation.x >= -width / 2.0f)
                 if (possibleLocation.y <= height / 2.0f && possibleLocation.y >= -height / 2.0f)
-                    return true;
+                    return t;
         }
     }
 
-    return false;
+    return -9999;
 }
 
 void BoundingBox::updateEdges()

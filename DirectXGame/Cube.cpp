@@ -16,14 +16,14 @@ Cube::Cube(std::string name, Vector3D pos, Vector3D scale, Vector3D color, Vecto
 	this->colors = color;
 	this->localRotation = rot;
 	this->speed = rand() % 100 / 100.0f + 0.5f;
-	this->colors2[0] = Vector3D(1, 0, 1);
+	/*this->colors2[0] = Vector3D(1, 0, 1);
 	this->colors2[1] = Vector3D(1, 1, 0);
 	this->colors2[2] = Vector3D(0, 1, 1);
 	this->colors2[3] = Vector3D(0, 0, 1);
 	this->colors2[4] = Vector3D(0, 1, 0);
 	this->colors2[5] = Vector3D(1, 0, 0);
 	this->colors2[6] = Vector3D(1, 1, 1);
-	this->colors2[7] = Vector3D(0, 0, 0);
+	this->colors2[7] = Vector3D(0, 0, 0);*/
 
 	edges[0] = Vector3D(-this->localScale.x / 2.0f, -this->localScale.y / 2.0f, -this->localScale.z / 2.0f);
 	edges[1] = Vector3D(-this->localScale.x / 2.0f, this->localScale.y / 2.0f, -this->localScale.z / 2.0f);
@@ -42,17 +42,18 @@ Cube::Cube(std::string name, Vector3D pos, Vector3D scale, Vector3D color, Vecto
 	size_t size_shader = 0;
 	graphEngine->compileVertexShader(L"VertexShader.hlsl", "vsmain", &shader_byte_code, &size_shader);
 
+	Vector3D* worldLocations = getVertexWorldPositions();
 
 	vertex list[] = {
-		{ edges[0] + this->localPosition,		this->colors2[0] },
-		{ edges[1] + this->localPosition,		this->colors2[1] },
-		{ edges[2] + this->localPosition,		this->colors2[2] },
-		{ edges[3] + this->localPosition,		this->colors2[3] },
+		{ worldLocations[0],	this->colors },
+		{ worldLocations[1],	this->colors },
+		{ worldLocations[2],	this->colors },
+		{ worldLocations[3],	this->colors },
 
-		{ edges[4] + this->localPosition,		this->colors2[4] },
-		{ edges[5] + this->localPosition,		this->colors2[5] },
-		{ edges[6] + this->localPosition,		this->colors2[6] },
-		{ edges[7] + this->localPosition,		this->colors2[7] },
+		{ worldLocations[4],	this->colors },
+		{ worldLocations[5],	this->colors },
+		{ worldLocations[6],	this->colors },
+		{ worldLocations[7],	this->colors },
 	};
 
 	m_vb = GraphicsEngine::getInstance()->createVertexBuffer();
@@ -207,7 +208,7 @@ Vector3D* Cube::getVertexWorldPositions()
 	return worldLocations;
 }
 
-bool Cube::checkRaycast(Vector3D rayOrigin, Vector3D rayDirection)
+float Cube::checkRaycast(Vector3D rayOrigin, Vector3D rayDirection)
 {
 	return collisionBox->checkRaycast(rayOrigin, rayDirection);
 }
@@ -223,15 +224,15 @@ void Cube::updateVertexLocations()
 	Vector3D* worldLocations = getVertexWorldPositions();
 
 	vertex list[] = {
-		{ worldLocations[0],		this->colors2[0] },
-		{ worldLocations[1],		this->colors2[1] },
-		{ worldLocations[2],		this->colors2[2] },
-		{ worldLocations[3],		this->colors2[3] },
+		{ worldLocations[0],		this->colors },
+		{ worldLocations[1],		this->colors },
+		{ worldLocations[2],		this->colors },
+		{ worldLocations[3],		this->colors },
 
-		{ worldLocations[4],		this->colors2[4] },
-		{ worldLocations[5],		this->colors2[5] },
-		{ worldLocations[6],		this->colors2[6] },
-		{ worldLocations[7],		this->colors2[7] },
+		{ worldLocations[4],		this->colors },
+		{ worldLocations[5],		this->colors },
+		{ worldLocations[6],		this->colors },
+		{ worldLocations[7],		this->colors },
 	};
 
 	UINT size_list = ARRAYSIZE(list);
