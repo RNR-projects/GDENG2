@@ -4,6 +4,7 @@
 #include "InputSystem.h"
 #include <iostream>
 #include <random>
+#include "UIManager.h"
 
 AppWindow* AppWindow::sharedInstance = nullptr;
 
@@ -221,6 +222,44 @@ void AppWindow::onUpdate()
 	//plane->draw(m_cb);
 	//newQuad->draw(m_cb, EngineTime::getDeltaTime());
 
+	ImGui_ImplDX11_NewFrame();
+	ImGui_ImplWin32_NewFrame();
+	ImGui::NewFrame();
+
+	if (my_tool_active)
+	{
+		ImGui::Begin("My First Tool", &my_tool_active, ImGuiWindowFlags_MenuBar);
+		if (ImGui::BeginMenuBar())
+		{
+			if (ImGui::BeginMenu("File"))
+			{
+				if (ImGui::MenuItem("Open..", "Ctrl+O")) { /* Do stuff */ }
+				if (ImGui::MenuItem("Save", "Ctrl+S")) { /* Do stuff */ }
+				if (ImGui::MenuItem("Close", "Ctrl+W")) { my_tool_active = false; }
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenuBar();
+		}
+
+		// Edit a color (stored as ~4 floats)
+		ImGui::ColorEdit4("Color", my_color);
+
+		// Plot some values
+		const float my_values[] = { 0.2f, 0.1f, 1.0f, 0.5f, 0.9f, 2.2f };
+		ImGui::PlotLines("Frame Times", my_values, IM_ARRAYSIZE(my_values));
+
+		// Display contents in a scrolling region
+		ImGui::TextColored(ImVec4(1, 1, 0, 1), "Important Stuff");
+		ImGui::BeginChild("Scrolling");
+		for (int n = 0; n < 50; n++)
+			ImGui::Text("%04d: Some text", n);
+		ImGui::EndChild();
+		ImGui::End();
+	}
+
+	ImGui::Render();
+	ImGui_ImplDX11_RenderDrawData(ImGui::GetDrawData());
+
 	m_swap_chain->present(true);
 
 	m_previous_time = m_current_time;
@@ -234,6 +273,10 @@ void AppWindow::onDestroy()
 
 	m_swap_chain->release();
 	GraphicsEngine::getInstance()->destroy();
+
+	ImGui_ImplDX11_Shutdown();
+	ImGui_ImplWin32_Shutdown();
+	ImGui::DestroyContext();
 }
 
 void AppWindow::onFocus()
@@ -264,36 +307,15 @@ void AppWindow::createGraphicsWindow()
 		this->cubes.push_back(cubey);
 	}
 	//plane = new Plane("Plane", Vector3D(0, -0.25f, 0), Vector3D(3, 1, 3), Vector3D(1, 1, 0), Vector3D(0,0,0));
-	//newQuad = new AnimatedQuad();
 
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
 
-	/*Vector3D list[4] = {
-		Vector3D(-0.6f, -0.9f, 0),
-		Vector3D(-0.9f, 0.0f, 0),
-		Vector3D(1.0f, -0.25f, 0),
-		Vector3D(-0.6f, -0.9f, 1.0f)
-	};
-	Vector3D list2[4] = {
-		Vector3D(-0.25f, 0.0f, 0),
-		Vector3D(0.0f, 0.75f, 0),
-		Vector3D(0.0f, -0.75f, 0),
-		Vector3D(0.75f, 0.75f, 0)
-	};
-	
-	Vector3D color[4] = {
-		Vector3D(0.5f, 0.0f, 0),
-		Vector3D(1.0f, 1.0f, 0),
-		Vector3D(0.0f, 0.0f, 1.0f),
-		Vector3D(1.0f, 1.0f, 1.0f)
-	};
-	Vector3D color2[4] = {
-		Vector3D(0.0f, 1.0f, 0),
-		Vector3D(1.0f, 1.0f, 0),
-		Vector3D(1.0f, 0.0f, 0),
-		Vector3D(0.0f, 0.0f, 1.0f)
-	};
+	ImGui::StyleColorsDark();
 
-	newQuad->createQuad(list, list2, color, color2);*/
+	ImGui_ImplWin32_Init(this->m_hwnd);
+	ImGui_ImplDX11_Init(GraphicsEngine::getInstance()->m_d3d_device, GraphicsEngine::getInstance()->m_imm_context);
 
 	cc.m_time = 0;
 
