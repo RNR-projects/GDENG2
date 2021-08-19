@@ -8,6 +8,7 @@
 #include "IndexBuffer.h"
 #include "BoundingBox.h"
 #include <random>
+#include "RenderSystem.h"
 
 Cube::Cube(std::string name, Vector3D pos, Vector3D scale, Vector3D color, Vector3D rot) : AGameObject(name)
 {
@@ -36,7 +37,7 @@ Cube::Cube(std::string name, Vector3D pos, Vector3D scale, Vector3D color, Vecto
 
 	collisionBox = new BoundingBox(this->localPosition, this->localRotation, 1.0f * this->localScale.x, 1.0f * this->localScale.y, 1.0f * this->localScale.z);
 
-	GraphicsEngine* graphEngine = GraphicsEngine::getInstance();
+	RenderSystem* graphEngine = GraphicsEngine::getInstance()->getRenderSystem();
 
 	void* shader_byte_code = nullptr;
 	size_t size_shader = 0;
@@ -55,8 +56,6 @@ Cube::Cube(std::string name, Vector3D pos, Vector3D scale, Vector3D color, Vecto
 		{ worldLocations[6],	this->colors },
 		{ worldLocations[7],	this->colors },
 	};
-
-	m_vb = GraphicsEngine::getInstance()->createVertexBuffer();
 
 	UINT size_list = ARRAYSIZE(list);
 
@@ -80,32 +79,30 @@ Cube::Cube(std::string name, Vector3D pos, Vector3D scale, Vector3D color, Vecto
 		1,0,7
 	};
 
-	m_ib = GraphicsEngine::getInstance()->createIndexBuffer();
 	UINT size_index_list = ARRAYSIZE(index_list);
+	m_ib = graphEngine->createIndexBuffer(index_list, size_index_list);
 
-	m_ib->load(index_list, size_index_list);
+	m_vs = graphEngine->createVertexShader(shader_byte_code, size_shader);
 
-	m_vs = GraphicsEngine::getInstance()->createVertexShader(shader_byte_code, size_shader);
+	m_vb = graphEngine->createVertexBuffer(list, sizeof(vertex), size_list, shader_byte_code, size_shader);
 
-	m_vb->load(list, sizeof(vertex), size_list, shader_byte_code, size_shader);
+	graphEngine->releaseCompiledShader();
 
-	GraphicsEngine::getInstance()->releaseCompiledShader();
+	graphEngine->compilePixelShader(L"PixelShader.hlsl", "psmain", &shader_byte_code, &size_shader);
 
-	GraphicsEngine::getInstance()->compilePixelShader(L"PixelShader.hlsl", "psmain", &shader_byte_code, &size_shader);
+	m_ps = graphEngine->createPixelShader(shader_byte_code, size_shader);
 
-	m_ps = GraphicsEngine::getInstance()->createPixelShader(shader_byte_code, size_shader);
-
-	GraphicsEngine::getInstance()->releaseCompiledShader();
+	graphEngine->releaseCompiledShader();
 }
 
 Cube::~Cube()
 {
 	delete collisionBox;
 
-	m_vb->release();
-	m_vs->release();
-	m_ps->release();
-	m_ib->release();
+	delete m_vb;
+	delete m_vs;
+	delete m_ps;
+	delete m_ib;
 }
 
 void Cube::setPosition(float x, float y, float z)
@@ -180,16 +177,16 @@ void Cube::update(float deltaTime)
 
 void Cube::draw(ConstantBuffer* cb)
 {
-	GraphicsEngine::getInstance()->getImmediateDeviceContext()->setConstantBuffer(m_vs, cb);
-	GraphicsEngine::getInstance()->getImmediateDeviceContext()->setConstantBuffer(m_ps, cb);
+	GraphicsEngine::getInstance()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_vs, cb);
+	GraphicsEngine::getInstance()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ps, cb);
 
-	GraphicsEngine::getInstance()->getImmediateDeviceContext()->setVertexShader(m_vs);
-	GraphicsEngine::getInstance()->getImmediateDeviceContext()->setPixelShader(m_ps);
+	GraphicsEngine::getInstance()->getRenderSystem()->getImmediateDeviceContext()->setVertexShader(m_vs);
+	GraphicsEngine::getInstance()->getRenderSystem()->getImmediateDeviceContext()->setPixelShader(m_ps);
 
-	GraphicsEngine::getInstance()->getImmediateDeviceContext()->setVertexBuffer(m_vb);
-	GraphicsEngine::getInstance()->getImmediateDeviceContext()->setIndexBuffer(m_ib);
+	GraphicsEngine::getInstance()->getRenderSystem()->getImmediateDeviceContext()->setVertexBuffer(m_vb);
+	GraphicsEngine::getInstance()->getRenderSystem()->getImmediateDeviceContext()->setIndexBuffer(m_ib);
 
-	GraphicsEngine::getInstance()->getImmediateDeviceContext()->drawIndexedTriangleList(m_ib->getSizeIndexList(), 0, 0);
+	GraphicsEngine::getInstance()->getRenderSystem()->getImmediateDeviceContext()->drawIndexedTriangleList(m_ib->getSizeIndexList(), 0, 0);
 }
 
 Vector3D* Cube::getVertexWorldPositions()
@@ -215,7 +212,7 @@ float Cube::checkRaycast(Vector3D rayOrigin, Vector3D rayDirection)
 
 void Cube::updateVertexLocations()
 {
-	GraphicsEngine* graphEngine = GraphicsEngine::getInstance();
+	RenderSystem* graphEngine = GraphicsEngine::getInstance()->getRenderSystem();
 
 	void* shader_byte_code = nullptr;
 	size_t size_shader = 0;
@@ -237,7 +234,8 @@ void Cube::updateVertexLocations()
 
 	UINT size_list = ARRAYSIZE(list);
 
-	m_vb->load(list, sizeof(vertex), size_list, shader_byte_code, size_shader);
+	delete m_vb;
+	m_vb = graphEngine->createVertexBuffer(list, sizeof(vertex), size_list, shader_byte_code, size_shader);
 
-	GraphicsEngine::getInstance()->releaseCompiledShader();
+	graphEngine->releaseCompiledShader();
 }

@@ -6,19 +6,14 @@
 #include "ConstantBuffer.h"
 #include "IndexBuffer.h"
 
-DeviceContext::DeviceContext(ID3D11DeviceContext* device_context) : m_device_context(device_context)
+DeviceContext::DeviceContext(ID3D11DeviceContext* device_context, RenderSystem* system) : m_system(system), m_device_context(device_context)
 {
 	
 }
 
 DeviceContext::~DeviceContext()
 {
-}
-
-void DeviceContext::release()
-{
 	m_device_context->Release();
-	delete this;
 }
 
 void DeviceContext::clearRenderTargetColor(SwapChain* swap_chain, float red, float green, float blue, float alpha)

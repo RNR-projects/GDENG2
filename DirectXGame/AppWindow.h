@@ -9,7 +9,6 @@
 #include "ConstantBuffer.h"
 #include "Cube.h"
 #include "InputListener.h"
-#include "AnimatedQuad.h"
 #include <vector>
 #include "Plane.h"
 #include "Camera.h"
@@ -60,7 +59,6 @@ private:
 	Camera* cam;
 
 	std::vector<Cube*> cubes;
-	AnimatedQuad* newQuad;
 	Plane* plane;
 
 	float m_previous_time;

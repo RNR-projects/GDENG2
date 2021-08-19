@@ -4,6 +4,7 @@
 #include "MenuScreen.h"
 #include "InspectorScreen.h"
 #include "HierarchyScreen.h"
+#include "RenderSystem.h"
 
 UIManager* UIManager::sharedInstance = nullptr;
 
@@ -55,6 +56,7 @@ void UIManager::drawAllUI()
     {
         ImGui::Begin("Credits");
         {
+            //ImGui::Image(, ImVec2(100, 100));
             ImGui::Text("Scene Editor v0.1");
             ImGui::Text("Developed by: Robert Nathan Roleda");
 
@@ -93,7 +95,7 @@ UIManager::UIManager(HWND windowHandle)
     ImGui::StyleColorsDark();
 
     ImGui_ImplWin32_Init(windowHandle);
-    ImGui_ImplDX11_Init(GraphicsEngine::getInstance()->m_d3d_device, GraphicsEngine::getInstance()->m_imm_context);
+    ImGui_ImplDX11_Init(GraphicsEngine::getInstance()->getRenderSystem()->m_d3d_device, GraphicsEngine::getInstance()->getRenderSystem()->m_imm_context);
 
     UINames uiNames;
     ProfilerScreen* profilerScreen = new ProfilerScreen();

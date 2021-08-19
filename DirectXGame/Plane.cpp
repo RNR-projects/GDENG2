@@ -6,6 +6,7 @@
 #include "ConstantBuffer.h"
 #include "DeviceContext.h"
 #include "IndexBuffer.h"
+#include "RenderSystem.h"
 
 Plane::Plane(std::string name, Vector3D pos, Vector3D scale, Vector3D color, Vector3D rot) : AGameObject(name)
 {
@@ -19,7 +20,7 @@ Plane::Plane(std::string name, Vector3D pos, Vector3D scale, Vector3D color, Vec
 	edges[2] = Vector3D(this->localScale.x / 2.0f, 0.1f, -this->localScale.z / 2.0f);
 	edges[3] = Vector3D(this->localScale.x / 2.0f, 0.2f, this->localScale.z / 2.0f);
 
-	GraphicsEngine* graphEngine = GraphicsEngine::getInstance();
+	RenderSystem* graphEngine = GraphicsEngine::getInstance()->getRenderSystem();
 
 	void* shader_byte_code = nullptr;
 	size_t size_shader = 0;
@@ -37,34 +38,30 @@ Plane::Plane(std::string name, Vector3D pos, Vector3D scale, Vector3D color, Vec
 		1,2,3
 	};
 
-	m_ib = GraphicsEngine::getInstance()->createIndexBuffer();
 	UINT size_index_list = ARRAYSIZE(index_list);
-
-	m_ib->load(index_list, size_index_list);
-
-	m_vb = GraphicsEngine::getInstance()->createVertexBuffer();
+	m_ib = graphEngine->createIndexBuffer(index_list, size_index_list);
 
 	UINT size_list = ARRAYSIZE(list);
 
-	m_vs = GraphicsEngine::getInstance()->createVertexShader(shader_byte_code, size_shader);
+	m_vs = graphEngine->createVertexShader(shader_byte_code, size_shader);
 
-	m_vb->load(list, sizeof(vertex), size_list, shader_byte_code, size_shader);
+	m_vb = graphEngine->createVertexBuffer(list, sizeof(vertex), size_list, shader_byte_code, size_shader);
 
-	GraphicsEngine::getInstance()->releaseCompiledShader();
+	graphEngine->releaseCompiledShader();
 
-	GraphicsEngine::getInstance()->compilePixelShader(L"PixelShader.hlsl", "psmain", &shader_byte_code, &size_shader);
+	graphEngine->compilePixelShader(L"PixelShader.hlsl", "psmain", &shader_byte_code, &size_shader);
 
-	m_ps = GraphicsEngine::getInstance()->createPixelShader(shader_byte_code, size_shader);
+	m_ps = graphEngine->createPixelShader(shader_byte_code, size_shader);
 
-	GraphicsEngine::getInstance()->releaseCompiledShader();
+	graphEngine->releaseCompiledShader();
 }
 
 Plane::~Plane()
 {
-	m_vb->release();
-	m_vs->release();
-	m_ps->release();
-	m_ib->release();
+	delete m_vb;
+	delete m_vs;
+	delete m_ps;
+	delete m_ib;
 }
 
 void Plane::setColors(Vector3D color)
@@ -78,16 +75,16 @@ void Plane::update(float deltaTime)
 
 void Plane::draw(ConstantBuffer* cb)
 {
-	GraphicsEngine::getInstance()->getImmediateDeviceContext()->setConstantBuffer(m_vs, cb);
-	GraphicsEngine::getInstance()->getImmediateDeviceContext()->setConstantBuffer(m_ps, cb);
+	GraphicsEngine::getInstance()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_vs, cb);
+	GraphicsEngine::getInstance()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ps, cb);
 
-	GraphicsEngine::getInstance()->getImmediateDeviceContext()->setVertexShader(m_vs);
-	GraphicsEngine::getInstance()->getImmediateDeviceContext()->setPixelShader(m_ps);
+	GraphicsEngine::getInstance()->getRenderSystem()->getImmediateDeviceContext()->setVertexShader(m_vs);
+	GraphicsEngine::getInstance()->getRenderSystem()->getImmediateDeviceContext()->setPixelShader(m_ps);
 
-	GraphicsEngine::getInstance()->getImmediateDeviceContext()->setVertexBuffer(m_vb);
-	GraphicsEngine::getInstance()->getImmediateDeviceContext()->setIndexBuffer(m_ib);
+	GraphicsEngine::getInstance()->getRenderSystem()->getImmediateDeviceContext()->setVertexBuffer(m_vb);
+	GraphicsEngine::getInstance()->getRenderSystem()->getImmediateDeviceContext()->setIndexBuffer(m_ib);
 
-	GraphicsEngine::getInstance()->getImmediateDeviceContext()->drawTriangleStrip(m_vb->getSizeVertexList(), 0);
+	GraphicsEngine::getInstance()->getRenderSystem()->getImmediateDeviceContext()->drawTriangleStrip(m_vb->getSizeVertexList(), 0);
 }
 
 
@@ -125,7 +122,7 @@ Vector3D* Plane::getVertexWorldPositions()
 
 void Plane::updateVertexLocations()
 {
-	GraphicsEngine* graphEngine = GraphicsEngine::getInstance();
+	RenderSystem* graphEngine = GraphicsEngine::getInstance()->getRenderSystem();
 
 	void* shader_byte_code = nullptr;
 	size_t size_shader = 0;
@@ -142,7 +139,8 @@ void Plane::updateVertexLocations()
 
 	UINT size_list = ARRAYSIZE(list);
 
-	m_vb->load(list, sizeof(vertex), size_list, shader_byte_code, size_shader);
+	delete m_vb;
+	m_vb = graphEngine->createVertexBuffer(list, sizeof(vertex), size_list, shader_byte_code, size_shader);
 
-	GraphicsEngine::getInstance()->releaseCompiledShader();
+	GraphicsEngine::getInstance()->getRenderSystem()->releaseCompiledShader();
 }
