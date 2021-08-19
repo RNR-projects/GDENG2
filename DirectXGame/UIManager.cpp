@@ -29,9 +29,55 @@ void UIManager::drawAllUI()
     ImGui_ImplWin32_NewFrame();
     ImGui::NewFrame();
 
-    for (int i = 0; i < this->uiList.size(); i++)
+    //for (int i = 0; i < this->uiList.size(); i++)
+    //{
+    //    this->uiList[i]->drawUI();
+    //}
+    //ImGui::ShowDemoWindow();
+    ImGui::Begin("Menu", 0, ImGuiWindowFlags_MenuBar);
+    if (ImGui::BeginMenuBar())
     {
-        this->uiList[i]->drawUI();
+        if (ImGui::BeginMenu("Window"))
+        {
+            if (ImGui::MenuItem("Color Picker UI")) { isPlaceholderOpen = true; }
+            ImGui::EndMenu();
+        }
+        if (ImGui::BeginMenu("About"))
+        {
+            if (ImGui::MenuItem("Credits")) { isCreditsOpen = true; }
+            ImGui::EndMenu();
+        }
+        ImGui::EndMenuBar();
+    }
+    ImGui::End();
+
+    if (isCreditsOpen)
+    {
+        ImGui::Begin("Credits");
+        {
+            ImGui::Text("Scene Editor v0.1");
+            ImGui::Text("Developed by: Robert Nathan Roleda");
+
+            ImGui::Text("Acknowledgements: ");
+            ImGui::Text("Sir Neil");
+            ImGui::Text("PardCode");
+            ImGui::Text("IMGUI");
+            ImGui::Text("DirectX");
+
+            ImGui::SetCursorPos(ImVec2(ImGui::GetWindowSize().x * 0.5f, ImGui::GetWindowSize().y - 50));
+            if (ImGui::Button("Close"))
+            {
+                isCreditsOpen = false;
+            }
+        }
+        ImGui::End();
+    }
+
+    if (isPlaceholderOpen)
+    {
+        ImGui::Begin("Color Picker", &isPlaceholderOpen);
+        ImGui::ColorEdit4("Color", my_color);
+        ImGui::End();
     }
 
     ImGui::Render();

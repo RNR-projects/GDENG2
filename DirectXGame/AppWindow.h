@@ -74,9 +74,5 @@ private:
 	float orthoNearPlane = -4.0f;
 
 	Cube* selectedCube = nullptr;
-
-	bool my_tool_active=true;
-	bool show_demo_window = true;
-	float my_color[4];
 };
 

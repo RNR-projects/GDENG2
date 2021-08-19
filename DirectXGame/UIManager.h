@@ -39,5 +39,9 @@ private:
 
 	std::vector<AUIScreen*> uiList;
 	std::unordered_map<std::string, AUIScreen*> uiTable;
+
+	bool isCreditsOpen = false;
+	bool isPlaceholderOpen = false;
+	float my_color[4];
 };
 
