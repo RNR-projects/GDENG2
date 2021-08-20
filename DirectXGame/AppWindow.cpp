@@ -5,7 +5,6 @@
 #include <iostream>
 #include <random>
 #include "UIManager.h"
-#include "RenderSystem.h"
 
 AppWindow* AppWindow::sharedInstance = nullptr;
 
