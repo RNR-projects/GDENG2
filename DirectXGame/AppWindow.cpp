@@ -176,7 +176,7 @@ void AppWindow::update()
 	cc.m_view = cam->getViewMatrix();
 	cc.m_view.invert();
 
-	m_cb->update(GraphicsEngine::getInstance()->getImmediateDeviceContext(), &cc);
+	m_cb->update(GraphicsEngine::getInstance()->getRenderSystem()->getImmediateDeviceContext(), &cc);
 }
 
 void AppWindow::onCreate()
@@ -205,22 +205,23 @@ void AppWindow::onUpdate()
 
 	InputSystem::getInstance()->update();
 
-	GraphicsEngine::getInstance()->getImmediateDeviceContext()->clearRenderTargetColor(this->m_swap_chain, 0, 0.3f, 0.4f, 1);
+	GraphicsEngine::getInstance()->getRenderSystem()->getImmediateDeviceContext()->clearRenderTargetColor(this->m_swap_chain, 0, 0.3f, 0.4f, 1);
 
 	RECT rc = this->getClientWindowRect();
 	int width = rc.right - rc.left;
 	int height = rc.bottom - rc.top;
-	GraphicsEngine::getInstance()->getImmediateDeviceContext()->setViewportSize(width, height);
+	GraphicsEngine::getInstance()->getRenderSystem()->getImmediateDeviceContext()->setViewportSize(width, height);
 
 	update();
 
 	for (int i = 0; i < cubes.size(); i++)
 	{
 		this->cubes[i]->update(m_delta_time);
-		this->cubes[i]->draw(m_cb);
+		//this->cubes[i]->draw(m_cb);
 	}
 	//plane->draw(m_cb);
 	//newQuad->draw(m_cb, EngineTime::getDeltaTime());
+	obj->draw(m_cb);
 
 	UIManager::getInstance()->drawAllUI();
 
@@ -235,7 +236,7 @@ void AppWindow::onDestroy()
 {
 	Window::onDestroy();
 
-	m_swap_chain->release();
+	delete m_swap_chain;
 	GraphicsEngine::getInstance()->destroy();
 
 	ImGui_ImplDX11_Shutdown();
@@ -258,26 +259,25 @@ void AppWindow::createGraphicsWindow()
 	GraphicsEngine::intialize();
 	GraphicsEngine* graphEngine = GraphicsEngine::getInstance();
 
-	m_swap_chain = GraphicsEngine::getInstance()->createSwapChain();
 	RECT rc = this->getClientWindowRect();
 	int width = rc.right - rc.left;
 	int height = rc.bottom - rc.top;
+	m_swap_chain = GraphicsEngine::getInstance()->getRenderSystem()->createSwapChain(this->m_hwnd, width, height);	
 
-	m_swap_chain->init(this->m_hwnd, width, height);
 	for (int i = 0; i < 3; i++)
 	{
 		Vector3D loc = Vector3D(rand() % 200 / 100.0f - 1.0f, rand() % 200 / 100.0f - 1.0f, rand() % 200 / 100.0f - 1.0f);
-		Cube* cubey = new Cube("Cube " + i, loc, Vector3D(1,1,1), Vector3D(0, 1, 1), Vector3D());
+		Cube* cubey = new Cube("Cube " + i, loc, Vector3D(1, 1, 1), Vector3D(0, 1, 1), Vector3D());
 		this->cubes.push_back(cubey);
 	}
 	//plane = new Plane("Plane", Vector3D(0, -0.25f, 0), Vector3D(3, 1, 3), Vector3D(1, 1, 0), Vector3D(0,0,0));
+	obj = new LoadedMeshObject("Mesh", Vector3D(), Vector3D(1, 1, 1), Vector3D());
 
 	UIManager::initialize(this->m_hwnd);
 
 	cc.m_time = 0;
 
-	m_cb = GraphicsEngine::getInstance()->createConstantBuffer();
-	m_cb->load(&cc, sizeof(constant));
+	m_cb = GraphicsEngine::getInstance()->getRenderSystem()->createConstantBuffer(&cc, sizeof(constant));
 }
 
 void AppWindow::initializeEngine()

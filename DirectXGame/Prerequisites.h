@@ -1,0 +1,16 @@
+#pragma once
+class SwapChain;
+class DeviceContext;
+class VertexBuffer;
+class VertexShader;
+class PixelShader;
+class ConstantBuffer;
+class IndexBuffer;
+class RenderSystem;
+class GraphicsEngine;
+class ResourceManager;
+class Resource;
+class TextureManager;
+class Texture;
+class MeshManager;
+class Mesh;

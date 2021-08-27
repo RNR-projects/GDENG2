@@ -9,10 +9,10 @@
 #include "ConstantBuffer.h"
 #include "Cube.h"
 #include "InputListener.h"
-#include "AnimatedQuad.h"
 #include <vector>
 #include "Plane.h"
 #include "Camera.h"
+#include "LoadedMeshObject.h"
 
 class AppWindow : public Window, public InputListener
 {
@@ -60,7 +60,6 @@ private:
 	Camera* cam;
 
 	std::vector<Cube*> cubes;
-	AnimatedQuad* newQuad;
 	Plane* plane;
 
 	float m_previous_time;
@@ -74,5 +73,7 @@ private:
 	float orthoNearPlane = -4.0f;
 
 	Cube* selectedCube = nullptr;
+
+	LoadedMeshObject* obj = nullptr;
 };
 
