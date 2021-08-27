@@ -1,9 +1,10 @@
 #include "ResourceManager.h"
-#include <filesystem>
+#define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
+#include <experimental/filesystem>
 
 Resource* ResourceManager::createResourceFromFile(const wchar_t* file_path)
 {
-    std::wstring fullPath = std::filesystem::absolute(file_path);
+    std::wstring fullPath = std::experimental::filesystem::absolute(file_path);
 
     auto it = m_map_resources.find(fullPath);
 

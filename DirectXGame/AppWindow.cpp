@@ -217,10 +217,11 @@ void AppWindow::onUpdate()
 	for (int i = 0; i < cubes.size(); i++)
 	{
 		this->cubes[i]->update(m_delta_time);
-		this->cubes[i]->draw(m_cb);
+		//this->cubes[i]->draw(m_cb);
 	}
 	//plane->draw(m_cb);
 	//newQuad->draw(m_cb, EngineTime::getDeltaTime());
+	obj->draw(m_cb);
 
 	UIManager::getInstance()->drawAllUI();
 
@@ -270,6 +271,7 @@ void AppWindow::createGraphicsWindow()
 		this->cubes.push_back(cubey);
 	}
 	//plane = new Plane("Plane", Vector3D(0, -0.25f, 0), Vector3D(3, 1, 3), Vector3D(1, 1, 0), Vector3D(0,0,0));
+	obj = new LoadedMeshObject("Mesh", Vector3D(), Vector3D(1, 1, 1), Vector3D());
 
 	UIManager::initialize(this->m_hwnd);
 

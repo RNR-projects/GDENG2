@@ -9,6 +9,7 @@
 #include "BoundingBox.h"
 #include <random>
 #include "RenderSystem.h"
+#include "Texture.h"
 
 Cube::Cube(std::string name, Vector3D pos, Vector3D scale, Vector3D color, Vector3D rot) : AGameObject(name)
 {
@@ -25,6 +26,8 @@ Cube::Cube(std::string name, Vector3D pos, Vector3D scale, Vector3D color, Vecto
 	this->colors2[5] = Vector3D(1, 0, 0);
 	this->colors2[6] = Vector3D(1, 1, 1);
 	this->colors2[7] = Vector3D(0, 0, 0);*/
+
+	m_wood_tex = GraphicsEngine::getInstance()->getTextureManager()->createTextureFromFile(L"Assets\\Textures\\wood.jpg");
 
 	edges[0] = Vector3D(-this->localScale.x / 2.0f, -this->localScale.y / 2.0f, -this->localScale.z / 2.0f);
 	edges[1] = Vector3D(-this->localScale.x / 2.0f, this->localScale.y / 2.0f, -this->localScale.z / 2.0f);
@@ -45,8 +48,20 @@ Cube::Cube(std::string name, Vector3D pos, Vector3D scale, Vector3D color, Vecto
 
 	Vector3D* worldLocations = getVertexWorldPositions();
 
-	vertex list[] = {
-		{ worldLocations[0],	this->colors },
+	Vector3D positionList[] = {
+		worldLocations[0],
+		worldLocations[1],
+		worldLocations[2],
+		worldLocations[3],
+
+		worldLocations[4],
+		worldLocations[5],
+		worldLocations[6],
+		worldLocations[7],
+	};
+
+	Vector2D texcoordList[] = {
+		/*{worldLocations[0],	this->colors},
 		{ worldLocations[1],	this->colors },
 		{ worldLocations[2],	this->colors },
 		{ worldLocations[3],	this->colors },
@@ -54,29 +69,67 @@ Cube::Cube(std::string name, Vector3D pos, Vector3D scale, Vector3D color, Vecto
 		{ worldLocations[4],	this->colors },
 		{ worldLocations[5],	this->colors },
 		{ worldLocations[6],	this->colors },
-		{ worldLocations[7],	this->colors },
+		{ worldLocations[7],	this->colors },*/
+		Vector2D(0,0),
+		Vector2D(0,1),
+		Vector2D(1,0),
+		Vector2D(1,1)
 	};
 
-	UINT size_list = ARRAYSIZE(list);
+	vertex vertexList[] = {
+		{ positionList[0],texcoordList[1] },
+		{ positionList[1],texcoordList[0] },
+		{ positionList[2],texcoordList[2] },
+		{ positionList[3],texcoordList[3] },
+
+
+		{ positionList[4],texcoordList[1] },
+		{ positionList[5],texcoordList[0] },
+		{ positionList[6],texcoordList[2] },
+		{ positionList[7],texcoordList[3] },
+
+
+		{ positionList[1],texcoordList[1] },
+		{ positionList[6],texcoordList[0] },
+		{ positionList[5],texcoordList[2] },
+		{ positionList[2],texcoordList[3] },
+
+		{ positionList[7],texcoordList[1] },
+		{ positionList[0],texcoordList[0] },
+		{ positionList[3],texcoordList[2] },
+		{ positionList[4],texcoordList[3] },
+
+		{ positionList[3],texcoordList[1] },
+		{ positionList[2],texcoordList[0] },
+		{ positionList[5],texcoordList[2] },
+		{ positionList[4],texcoordList[3] },
+
+		{ positionList[7],texcoordList[1] },
+		{ positionList[6],texcoordList[0] },
+		{ positionList[1],texcoordList[2] },
+		{ positionList[0],texcoordList[3] }
+	};
+
+	UINT size_list = ARRAYSIZE(vertexList);
 
 	unsigned int index_list[] = {
-		0,1,2,
-		2,3,0,
-
+		0,1,2,  
+		2,3,0,  
+		
 		4,5,6,
 		6,7,4,
-
-		1,6,5,
-		5,2,1,
-
-		7,0,3,
-		3,4,7,
-
-		3,2,5,
-		5,4,3,
-
-		7,6,1,
-		1,0,7
+		
+		8,9,10,
+		10,11,8,
+		
+		12,13,14,
+		14,15,12,
+		
+		16,17,18,
+		18,19,16,
+		
+		20,21,22,
+		22,23,20
 	};
 
 	UINT size_index_list = ARRAYSIZE(index_list);
@@ -84,7 +137,7 @@ Cube::Cube(std::string name, Vector3D pos, Vector3D scale, Vector3D color, Vecto
 
 	m_vs = graphEngine->createVertexShader(shader_byte_code, size_shader);
 
-	m_vb = graphEngine->createVertexBuffer(list, sizeof(vertex), size_list, shader_byte_code, size_shader);
+	m_vb = graphEngine->createVertexBuffer(vertexList, sizeof(vertex), size_list, shader_byte_code, size_shader);
 
 	graphEngine->releaseCompiledShader();
 
@@ -182,6 +235,8 @@ void Cube::draw(ConstantBuffer* cb)
 
 	GraphicsEngine::getInstance()->getRenderSystem()->getImmediateDeviceContext()->setVertexShader(m_vs);
 	GraphicsEngine::getInstance()->getRenderSystem()->getImmediateDeviceContext()->setPixelShader(m_ps);
+	
+	GraphicsEngine::getInstance()->getRenderSystem()->getImmediateDeviceContext()->setTexture(m_ps, m_wood_tex);
 
 	GraphicsEngine::getInstance()->getRenderSystem()->getImmediateDeviceContext()->setVertexBuffer(m_vb);
 	GraphicsEngine::getInstance()->getRenderSystem()->getImmediateDeviceContext()->setIndexBuffer(m_ib);
@@ -220,22 +275,63 @@ void Cube::updateVertexLocations()
 
 	Vector3D* worldLocations = getVertexWorldPositions();
 
-	vertex list[] = {
-		{ worldLocations[0],		this->colors },
-		{ worldLocations[1],		this->colors },
-		{ worldLocations[2],		this->colors },
-		{ worldLocations[3],		this->colors },
+	Vector3D positionList[] = {
+		worldLocations[0],
+		worldLocations[1],
+		worldLocations[2],
+		worldLocations[3],
 
-		{ worldLocations[4],		this->colors },
-		{ worldLocations[5],		this->colors },
-		{ worldLocations[6],		this->colors },
-		{ worldLocations[7],		this->colors },
+		worldLocations[4],
+		worldLocations[5],
+		worldLocations[6],
+		worldLocations[7],
 	};
 
-	UINT size_list = ARRAYSIZE(list);
+	Vector2D texcoordList[] = {
+		Vector2D(0,0),
+		Vector2D(0,1),
+		Vector2D(1,0),
+		Vector2D(1,1)
+	};
+
+	vertex vertexList[] = {
+		{ positionList[0],texcoordList[1] },
+		{ positionList[1],texcoordList[0] },
+		{ positionList[2],texcoordList[2] },
+		{ positionList[3],texcoordList[3] },
+
+
+		{ positionList[4],texcoordList[1] },
+		{ positionList[5],texcoordList[0] },
+		{ positionList[6],texcoordList[2] },
+		{ positionList[7],texcoordList[3] },
+
+
+		{ positionList[1],texcoordList[1] },
+		{ positionList[6],texcoordList[0] },
+		{ positionList[5],texcoordList[2] },
+		{ positionList[2],texcoordList[3] },
+
+		{ positionList[7],texcoordList[1] },
+		{ positionList[0],texcoordList[0] },
+		{ positionList[3],texcoordList[2] },
+		{ positionList[4],texcoordList[3] },
+
+		{ positionList[3],texcoordList[1] },
+		{ positionList[2],texcoordList[0] },
+		{ positionList[5],texcoordList[2] },
+		{ positionList[4],texcoordList[3] },
+
+		{ positionList[7],texcoordList[1] },
+		{ positionList[6],texcoordList[0] },
+		{ positionList[1],texcoordList[2] },
+		{ positionList[0],texcoordList[3] }
+	};
+
+	UINT size_list = ARRAYSIZE(vertexList);
 
 	delete m_vb;
-	m_vb = graphEngine->createVertexBuffer(list, sizeof(vertex), size_list, shader_byte_code, size_shader);
+	m_vb = graphEngine->createVertexBuffer(vertexList, sizeof(vertex), size_list, shader_byte_code, size_shader);
 
 	graphEngine->releaseCompiledShader();
 }

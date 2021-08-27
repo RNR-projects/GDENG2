@@ -2,12 +2,13 @@
 #include "Vector3D.h"
 #include "Matrix4x4.h"
 #include "Quaternion.h"
+#include "Vector2D.h"
 #include <DirectXMath.h>
 #include <DirectXCollision.h>
 
 struct vertex {
 	Vector3D position;
-	Vector3D color;
+	Vector2D texcoord;
 };
 
 __declspec(align(16))

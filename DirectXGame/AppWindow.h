@@ -12,6 +12,7 @@
 #include <vector>
 #include "Plane.h"
 #include "Camera.h"
+#include "LoadedMeshObject.h"
 
 class AppWindow : public Window, public InputListener
 {
@@ -72,5 +73,7 @@ private:
 	float orthoNearPlane = -4.0f;
 
 	Cube* selectedCube = nullptr;
+
+	LoadedMeshObject* obj = nullptr;
 };
 

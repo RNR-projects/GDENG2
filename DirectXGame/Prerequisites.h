@@ -12,3 +12,5 @@ class ResourceManager;
 class Resource;
 class TextureManager;
 class Texture;
+class MeshManager;
+class Mesh;

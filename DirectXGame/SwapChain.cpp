@@ -58,6 +58,9 @@ SwapChain::SwapChain(HWND hwnd, UINT width, UINT height, RenderSystem* system) :
 
 	hr = device->CreateDepthStencilView(buffer, NULL, &m_dsv);
 	buffer->Release();
+
+	if (FAILED(hr))
+		throw std::exception("SwapChain not created successfully");
 }
 
 SwapChain::~SwapChain()

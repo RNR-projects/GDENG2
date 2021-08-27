@@ -42,5 +42,9 @@ private:
 	class IndexBuffer* m_ib;
 
 	class BoundingBox* collisionBox;
+
+	class Texture* m_wood_tex;
+
+	class Mesh* m_mesh;
 };
 

@@ -8,7 +8,7 @@
 #include "IndexBuffer.h"
 #include "RenderSystem.h"
 
-Plane::Plane(std::string name, Vector3D pos, Vector3D scale, Vector3D color, Vector3D rot) : AGameObject(name)
+/*Plane::Plane(std::string name, Vector3D pos, Vector3D scale, Vector3D color, Vector3D rot) : AGameObject(name)
 {
 	this->localPosition = pos;
 	this->localScale = scale;
@@ -143,4 +143,4 @@ void Plane::updateVertexLocations()
 	m_vb = graphEngine->createVertexBuffer(list, sizeof(vertex), size_list, shader_byte_code, size_shader);
 
 	GraphicsEngine::getInstance()->getRenderSystem()->releaseCompiledShader();
-}
+}*/
