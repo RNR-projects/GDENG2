@@ -59,21 +59,13 @@ private:
 
 	Camera* cam;
 
-	std::vector<Cube*> cubes;
-	Plane* plane;
-
 	float m_previous_time;
 	float m_current_time;
 	float m_delta_time;
-	
-	float m_delta_pos;
-	float m_delta_scale;
 
 	bool isPerspective = true;
 	float orthoNearPlane = -4.0f;
 
 	Cube* selectedCube = nullptr;
-
-	LoadedMeshObject* obj = nullptr;
 };
 

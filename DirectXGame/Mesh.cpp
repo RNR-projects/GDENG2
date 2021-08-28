@@ -38,12 +38,15 @@ Mesh::Mesh(const wchar_t* fullPath) : Resource(fullPath)
 
 	std::vector<VertexMesh> list_vertices;
 	std::vector<unsigned int> list_indices;
+	tinyobj::real_t highestTx = 0;
+	tinyobj::real_t highestTy = 0;
 
 	for (size_t s = 0; s < shapes.size(); s++)
 	{
 		size_t index_offset = 0;
 		list_vertices.reserve(shapes[s].mesh.indices.size());
 		list_indices.reserve(shapes[s].mesh.indices.size());
+		
 
 		for (size_t f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++)
 		{
@@ -60,6 +63,11 @@ Mesh::Mesh(const wchar_t* fullPath) : Resource(fullPath)
 				tinyobj::real_t tx = attribs.texcoords[index.texcoord_index * 2 + 0];
 				tinyobj::real_t ty = attribs.texcoords[index.texcoord_index * 2 + 1];
 
+				if (tx > highestTx)
+					highestTx = tx;
+				if (ty > highestTy)
+					highestTy = ty;
+
 				VertexMesh vertex(Vector3D(vx, vy, vz), Vector2D(tx, ty));
 				list_vertices.push_back(vertex);
 
@@ -67,6 +75,21 @@ Mesh::Mesh(const wchar_t* fullPath) : Resource(fullPath)
 			}
 
 			index_offset += num_face_verts;
+		}
+	}
+
+	if (highestTx >= highestTy)
+	{
+		for (int i = 0; i < list_vertices.size(); i++)
+		{
+			list_vertices[i].m_texcoord = list_vertices[i].m_texcoord * (1.0f / highestTx);
+		}
+	}
+	else
+	{
+		for (int i = 0; i < list_vertices.size(); i++)
+		{
+			list_vertices[i].m_texcoord = list_vertices[i].m_texcoord * (1.0f / highestTy);
 		}
 	}
 

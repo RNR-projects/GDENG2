@@ -5,6 +5,7 @@
 #include <iostream>
 #include <random>
 #include "UIManager.h"
+#include "GameObjectManager.h"
 
 AppWindow* AppWindow::sharedInstance = nullptr;
 
@@ -49,7 +50,7 @@ void AppWindow::onLeftMouseDown(const Point& mouse_pos)
 	float t;
 	//ortho raycast comes from cursor straight forward along z
 	//perspective raycast comes from camera position in the direction of raycast world
-	for (int i = 0; i < cubes.size(); i++)
+	/*for (int i = 0; i < cubes.size(); i++)
 	{
 		if (!isPerspective) 
 			t = cubes[i]->checkRaycast(raycastWorld + cam->getLocalPosition() + cam->getForwardVector() * (orthoNearPlane), cam->getForwardVector());
@@ -70,7 +71,7 @@ void AppWindow::onLeftMouseDown(const Point& mouse_pos)
 	if (minIndex != -1)
 	{
 		selectedCube = cubes[minIndex];
-	}
+	}*/
 }
 
 void AppWindow::onLeftMouseUp(const Point& mouse_pos)
@@ -142,34 +143,7 @@ void AppWindow::destroy()
 
 void AppWindow::update()
 {
-	m_delta_pos += m_delta_time / 10.0f;
-	if (m_delta_pos > 1.0f)
-		m_delta_pos = 0;
-
-	m_delta_scale += m_delta_time / 0.5f;
-
-	Matrix4x4 temp;
-
 	cc.m_world.setIdentity();
-
-	/*Matrix4x4 new_cam;
-	new_cam.setIdentity();
-
-	temp.setIdentity();
-	temp.setRotationX(rot_x);
-	new_cam *= temp;
-	
-	temp.setIdentity();
-	temp.setRotationY(rot_y);
-	new_cam *= temp;
-
-	Vector3D newPos = worldCam.getTranslation() + new_cam.getZDirection() * moveForward * 0.3f + new_cam.getXDirection() * moveRight * 0.3f;
-
-	temp.setTranslation(newPos);
-	new_cam *= temp;
-	
-	worldCam = new_cam;
-	new_cam.invert();*/
 
 	cam->update(m_delta_time);
 
@@ -184,6 +158,7 @@ void AppWindow::onCreate()
 	Window::onCreate();
 
 	InputSystem::getInstance()->addListener(this);
+	GameObjectManager::initialize();
 	//InputSystem::getInstance()->showCursor(false);
 
 	cc.m_view.setIdentity();
@@ -214,14 +189,8 @@ void AppWindow::onUpdate()
 
 	update();
 
-	for (int i = 0; i < cubes.size(); i++)
-	{
-		this->cubes[i]->update(m_delta_time);
-		//this->cubes[i]->draw(m_cb);
-	}
-	//plane->draw(m_cb);
-	//newQuad->draw(m_cb, EngineTime::getDeltaTime());
-	obj->draw(m_cb);
+	GameObjectManager::getInstance()->updateAllGameObjects(m_delta_time);
+	GameObjectManager::getInstance()->drawAllGameObjects(m_cb);
 
 	UIManager::getInstance()->drawAllUI();
 
@@ -268,10 +237,10 @@ void AppWindow::createGraphicsWindow()
 	{
 		Vector3D loc = Vector3D(rand() % 200 / 100.0f - 1.0f, rand() % 200 / 100.0f - 1.0f, rand() % 200 / 100.0f - 1.0f);
 		Cube* cubey = new Cube("Cube " + i, loc, Vector3D(1, 1, 1), Vector3D(0, 1, 1), Vector3D());
-		this->cubes.push_back(cubey);
+		GameObjectManager::getInstance()->addGameObject(cubey);
 	}
-	//plane = new Plane("Plane", Vector3D(0, -0.25f, 0), Vector3D(3, 1, 3), Vector3D(1, 1, 0), Vector3D(0,0,0));
-	obj = new LoadedMeshObject("Mesh", Vector3D(), Vector3D(1, 1, 1), Vector3D());
+	//GameObjectManager::getInstance()->addGameObject(new Plane("Plane", Vector3D(0, -0.25f, 0), Vector3D(3, 1, 3), Vector3D(1, 1, 0), Vector3D(0,0,0)));
+	GameObjectManager::getInstance()->addGameObject(new LoadedMeshObject("Mesh", Vector3D(), Vector3D(1, 1, 1), Vector3D()));
 
 	UIManager::initialize(this->m_hwnd);
 

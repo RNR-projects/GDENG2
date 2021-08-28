@@ -4,3 +4,6 @@ DirectXGame/DirectXGame.vcxproj
 DirectXGame/DirectXGame.vcxproj.filters
 DirectXGame.zip
 Readme.txt
+DirectXGame/.vs/DirectXGame/v16/ipch/AutoPCH/f19ba980749564e0/PIXELSHADER.ipch
+DirectXGame/.vs/DirectXGame/v16/ipch/AutoPCH/6c5dc6e60623fca2/GRAPHICSENGINE.ipch
+DirectXGame/.vs/DirectXGame/v16/ipch/AutoPCH/2f430e481d560a55/VERTEXBUFFER.ipch
