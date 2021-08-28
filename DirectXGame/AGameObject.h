@@ -26,6 +26,7 @@ public:
 	Vector3D getLocalRotation();
 
 	std::string getName();
+	void setName(std::string newName);
 
 protected:
 	virtual void updateVertexLocations() = 0;

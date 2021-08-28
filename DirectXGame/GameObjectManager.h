@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include <string>
 
 class AGameObject;
 class ConstantBuffer;
@@ -15,6 +16,13 @@ public:
 	void updateAllGameObjects(float deltaTime);
 	void drawAllGameObjects(ConstantBuffer* cb);
 
+	std::vector<std::string> getGameObjectNames();
+
+	void selectObject(int index);
+	void selectObject(AGameObject* gameObject);
+
+	AGameObject* getSelectedObject();
+
 private:
 	GameObjectManager();
 	~GameObjectManager();
@@ -26,5 +34,8 @@ private:
 	void release();
 
 	std::vector<AGameObject*> gameObjectList;
+	std::vector<std::string> gameObjectNames;
+
+	AGameObject* selectedObject = nullptr;
 };
 

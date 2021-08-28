@@ -67,3 +67,8 @@ std::string AGameObject::getName()
 {
     return this->name;
 }
+
+void AGameObject::setName(std::string newName)
+{
+    name = newName;
+}

@@ -233,15 +233,6 @@ void AppWindow::createGraphicsWindow()
 	int height = rc.bottom - rc.top;
 	m_swap_chain = GraphicsEngine::getInstance()->getRenderSystem()->createSwapChain(this->m_hwnd, width, height);	
 
-	for (int i = 0; i < 3; i++)
-	{
-		Vector3D loc = Vector3D(rand() % 200 / 100.0f - 1.0f, rand() % 200 / 100.0f - 1.0f, rand() % 200 / 100.0f - 1.0f);
-		Cube* cubey = new Cube("Cube " + i, loc, Vector3D(1, 1, 1), Vector3D(0, 1, 1), Vector3D());
-		GameObjectManager::getInstance()->addGameObject(cubey);
-	}
-	//GameObjectManager::getInstance()->addGameObject(new Plane("Plane", Vector3D(0, -0.25f, 0), Vector3D(3, 1, 3), Vector3D(1, 1, 0), Vector3D(0,0,0)));
-	GameObjectManager::getInstance()->addGameObject(new LoadedMeshObject("Mesh", Vector3D(), Vector3D(1, 1, 1), Vector3D()));
-
 	UIManager::initialize(this->m_hwnd);
 
 	cc.m_time = 0;
