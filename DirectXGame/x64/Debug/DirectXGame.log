@@ -1,3 +1,60 @@
-﻿FXC : error X3501: 'main': entrypoint not found
-  
-  compilation failed; no code produced
+﻿  PhysicsComponent.cpp
+C:\Users\Nathan\Desktop\GDENG2\DirectXGame\Libs\ReactPhysics3D\include\reactphysics3d\collision\CollisionCallback.h(300,73): warning C4267: 'return': conversion from 'size_t' to 'reactphysics3d::uint', possible loss of data
+C:\Users\Nathan\Desktop\GDENG2\DirectXGame\Libs\ReactPhysics3D\include\reactphysics3d\collision\OverlapCallback.h(189,73): warning C4267: 'return': conversion from 'size_t' to 'reactphysics3d::uint', possible loss of data
+C:\Users\Nathan\Desktop\GDENG2\DirectXGame\Libs\ReactPhysics3D\include\reactphysics3d\collision\OverlapCallback.h(207,123): warning C4267: 'argument': conversion from 'size_t' to 'const reactphysics3d::uint', possible loss of data
+C:\Users\Nathan\Desktop\GDENG2\DirectXGame\Libs\ReactPhysics3D\include\reactphysics3d\collision\ContactManifold.h(37,26): warning C4099: 'reactphysics3d::ContactManifoldInfo': type name first seen using 'struct' now seen using 'class'
+C:\Users\Nathan\Desktop\GDENG2\DirectXGame\Libs\ReactPhysics3D\include\reactphysics3d\collision\ContactManifoldInfo.h(42): message : see declaration of 'reactphysics3d::ContactManifoldInfo'
+C:\Users\Nathan\Desktop\GDENG2\DirectXGame\Libs\ReactPhysics3D\include\reactphysics3d\collision\narrowphase\NarrowPhaseInfoBatch.h(38,26): warning C4099: 'reactphysics3d::ContactManifoldInfo': type name first seen using 'struct' now seen using 'class'
+C:\Users\Nathan\Desktop\GDENG2\DirectXGame\Libs\ReactPhysics3D\include\reactphysics3d\collision\ContactManifold.h(37): message : see declaration of 'reactphysics3d::ContactManifoldInfo'
+C:\Users\Nathan\Desktop\GDENG2\DirectXGame\Libs\ReactPhysics3D\include\reactphysics3d\collision\narrowphase\NarrowPhaseInfoBatch.h(129,37): warning C4267: 'return': conversion from 'size_t' to 'reactphysics3d::uint', possible loss of data
+C:\Users\Nathan\Desktop\GDENG2\DirectXGame\Libs\ReactPhysics3D\include\reactphysics3d\collision\narrowphase\NarrowPhaseAlgorithm.h(36,26): warning C4099: 'reactphysics3d::ContactManifoldInfo': type name first seen using 'struct' now seen using 'class'
+C:\Users\Nathan\Desktop\GDENG2\DirectXGame\Libs\ReactPhysics3D\include\reactphysics3d\collision\narrowphase\NarrowPhaseInfoBatch.h(38): message : see declaration of 'reactphysics3d::ContactManifoldInfo'
+C:\Users\Nathan\Desktop\GDENG2\DirectXGame\Libs\ReactPhysics3D\include\reactphysics3d\engine\Islands.h(94,1): warning C4267: 'initializing': conversion from 'size_t' to 'reactphysics3d::uint32', possible loss of data
+C:\Users\Nathan\Desktop\GDENG2\DirectXGame\Libs\ReactPhysics3D\include\reactphysics3d\utils\DebugRenderer.h(267,22): warning C4267: 'return': conversion from 'size_t' to 'reactphysics3d::uint32', possible loss of data
+C:\Users\Nathan\Desktop\GDENG2\DirectXGame\Libs\ReactPhysics3D\include\reactphysics3d\utils\DebugRenderer.h(291,26): warning C4267: 'return': conversion from 'size_t' to 'reactphysics3d::uint32', possible loss of data
+C:\Users\Nathan\Desktop\GDENG2\DirectXGame\Libs\ReactPhysics3D\include\reactphysics3d\engine\PhysicsWorld.h(710,34): warning C4267: 'return': conversion from 'size_t' to 'reactphysics3d::uint', possible loss of data
+C:\Users\Nathan\Desktop\GDENG2\DirectXGame\Libs\ReactPhysics3D\include\reactphysics3d\engine\PhysicsWorld.h(718,30): warning C4267: 'return': conversion from 'size_t' to 'reactphysics3d::uint', possible loss of data
+C:\Users\Nathan\Desktop\GDENG2\DirectXGame\Libs\ReactPhysics3D\include\reactphysics3d\collision\HalfEdgeStructure.h(135,32): warning C4267: 'return': conversion from 'size_t' to 'reactphysics3d::uint', possible loss of data
+C:\Users\Nathan\Desktop\GDENG2\DirectXGame\Libs\ReactPhysics3D\include\reactphysics3d\collision\shapes\HeightFieldShape.h(197,104): warning C4244: 'return': conversion from 'double' to 'reactphysics3d::decimal', possible loss of data
+C:\Users\Nathan\Desktop\GDENG2\DirectXGame\Libs\ReactPhysics3D\include\reactphysics3d\collision\shapes\HeightFieldShape.h(205,19): warning C4244: 'return': conversion from 'reactphysics3d::decimal' to 'int', possible loss of data
+C:\Users\Nathan\Desktop\GDENG2\DirectXGame\Libs\ReactPhysics3D\include\reactphysics3d\collision\TriangleMesh.h(100,34): warning C4267: 'return': conversion from 'size_t' to 'reactphysics3d::uint', possible loss of data
+C:\Users\Nathan\Desktop\GDENG2\DirectXGame\Matrix4x4.h(189,36): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+C:\Users\Nathan\Desktop\GDENG2\DirectXGame\Libs\ReactPhysics3D\include\reactphysics3d\containers\Map.h(503,1): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\Nathan\Desktop\GDENG2\DirectXGame\Libs\ReactPhysics3D\include\reactphysics3d\containers\Map.h(435): message : while compiling class template member function 'void reactphysics3d::Map<int,reactphysics3d::Entity,std::hash<int>,std::equal_to<V>>::add(const reactphysics3d::Pair<K,reactphysics3d::Entity> &,bool)'
+          with
+          [
+              V=int,
+              K=int
+          ]
+C:\Users\Nathan\Desktop\GDENG2\DirectXGame\Libs\ReactPhysics3D\include\reactphysics3d\systems\CollisionDetectionSystem.h(398): message : see reference to function template instantiation 'void reactphysics3d::Map<int,reactphysics3d::Entity,std::hash<int>,std::equal_to<V>>::add(const reactphysics3d::Pair<K,reactphysics3d::Entity> &,bool)' being compiled
+          with
+          [
+              V=int,
+              K=int
+          ]
+C:\Users\Nathan\Desktop\GDENG2\DirectXGame\Libs\ReactPhysics3D\include\reactphysics3d\systems\CollisionDetectionSystem.h(102): message : see reference to class template instantiation 'reactphysics3d::Map<int,reactphysics3d::Entity,std::hash<int>,std::equal_to<V>>' being compiled
+          with
+          [
+              V=int
+          ]
+C:\Users\Nathan\Desktop\GDENG2\DirectXGame\Libs\ReactPhysics3D\include\reactphysics3d\containers\Set.h(480,1): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data
+C:\Users\Nathan\Desktop\GDENG2\DirectXGame\Libs\ReactPhysics3D\include\reactphysics3d\containers\Set.h(425): message : while compiling class template member function 'bool reactphysics3d::Set<reactphysics3d::bodypair,std::hash<V>,std::equal_to<V>>::add(const V &)'
+          with
+          [
+              V=reactphysics3d::bodypair
+          ]
+C:\Users\Nathan\Desktop\GDENG2\DirectXGame\Libs\ReactPhysics3D\include\reactphysics3d\systems\CollisionDetectionSystem.h(403): message : see reference to function template instantiation 'bool reactphysics3d::Set<reactphysics3d::bodypair,std::hash<V>,std::equal_to<V>>::add(const V &)' being compiled
+          with
+          [
+              V=reactphysics3d::bodypair
+          ]
+C:\Users\Nathan\Desktop\GDENG2\DirectXGame\Libs\ReactPhysics3D\include\reactphysics3d\systems\CollisionDetectionSystem.h(93): message : see reference to class template instantiation 'reactphysics3d::Set<reactphysics3d::bodypair,std::hash<V>,std::equal_to<V>>' being compiled
+          with
+          [
+              V=reactphysics3d::bodypair
+          ]
+C:\Users\Nathan\Desktop\GDENG2\DirectXGame\Libs\ReactPhysics3D\include\reactphysics3d\containers\List.h(331,1): warning C4267: 'argument': conversion from 'size_t' to 'reactphysics3d::uint', possible loss of data
+C:\Users\Nathan\Desktop\GDENG2\DirectXGame\Libs\ReactPhysics3D\include\reactphysics3d\containers\List.h(329): message : while compiling class template member function 'reactphysics3d::List<reactphysics3d::Collider *>::Iterator reactphysics3d::List<reactphysics3d::Collider *>::remove(const reactphysics3d::List<reactphysics3d::Collider *>::Iterator &)'
+C:\Users\Nathan\Desktop\GDENG2\DirectXGame\Libs\ReactPhysics3D\include\reactphysics3d\containers\List.h(324): message : see reference to function template instantiation 'reactphysics3d::List<reactphysics3d::Collider *>::Iterator reactphysics3d::List<reactphysics3d::Collider *>::remove(const reactphysics3d::List<reactphysics3d::Collider *>::Iterator &)' being compiled
+C:\Users\Nathan\Desktop\GDENG2\DirectXGame\Libs\ReactPhysics3D\include\reactphysics3d\collision\shapes\CollisionShape.h(80): message : see reference to class template instantiation 'reactphysics3d::List<reactphysics3d::Collider *>' being compiled
+  DirectXGame.vcxproj -> C:\Users\Nathan\Desktop\GDENG2\DirectXGame\x64\Debug\DirectXGame.exe

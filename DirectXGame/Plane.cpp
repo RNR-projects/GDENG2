@@ -7,6 +7,7 @@
 #include "DeviceContext.h"
 #include "IndexBuffer.h"
 #include "RenderSystem.h"
+#include "PhysicsComponent.h"
 
 Plane::Plane(std::string name, Vector3D pos, Vector3D scale, Vector3D color, Vector3D rot) : AGameObject(name)
 {
@@ -14,6 +15,7 @@ Plane::Plane(std::string name, Vector3D pos, Vector3D scale, Vector3D color, Vec
 	this->localScale = scale;
 	this->colors = color;
 	this->localRotation = rot;
+	this->localScale.y = 0.1f;
 
 	edges[0] = Vector3D(-this->localScale.x / 2.0f, 0.1f, -this->localScale.z / 2.0f);
 	edges[1] = Vector3D(-this->localScale.x / 2.0f, 0.2f, this->localScale.z / 2.0f);
@@ -22,6 +24,7 @@ Plane::Plane(std::string name, Vector3D pos, Vector3D scale, Vector3D color, Vec
 
 	RenderSystem* graphEngine = GraphicsEngine::getInstance()->getRenderSystem();
 
+	this->attachComponent(new PhysicsComponent("planePhysics", this));
 	tex = GraphicsEngine::getInstance()->getTextureManager()->createTextureFromFile(L"Assets\\Textures\\sand.jpg");
 
 	void* shader_byte_code = nullptr;

@@ -31,6 +31,18 @@ public:
 		return quaternion;
 	}
 
+	static Vector3D toEuler(const Quaternion& quaterion)
+	{
+		Vector3D v;
+		v.x = atan2f(2.0f * (quaterion.q * quaterion.i + quaterion.j * quaterion.k), 
+			quaterion.q * quaterion.q - quaterion.i * quaterion.i - quaterion.j * quaterion.j + quaterion.k * quaterion.k);
+		v.y = asinf(2.0f * (quaterion.q * quaterion.j - quaterion.i * quaterion.k));
+		v.z = atan2f(2.0f * (quaterion.q * quaterion.k + quaterion.i * quaterion.j), 
+			quaterion.q * quaterion.q + quaterion.i * quaterion.i - quaterion.j * quaterion.j - quaterion.k * quaterion.k);
+
+		return v;
+	}
+
 	Quaternion operator *(const Quaternion& quaternion)
 	{
 		Quaternion result;

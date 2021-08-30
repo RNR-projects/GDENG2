@@ -1,0 +1,69 @@
+#include "PhysicsSystem.h"
+#include "PhysicsComponent.h"
+#include <iostream>
+#include "EngineTime.h"	
+
+PhysicsSystem::PhysicsSystem()
+{
+	this->physicsCommon = new reactphysics3d::PhysicsCommon();
+	reactphysics3d::PhysicsWorld::WorldSettings settings;
+	settings.defaultVelocitySolverNbIterations = 50;
+	settings.gravity = reactphysics3d::Vector3(0, -9.81, 0);
+	this->physicsWorld = this->physicsCommon->createPhysicsWorld(settings);
+	std::cout << "Successfully created physics world \n";
+}
+
+PhysicsSystem::~PhysicsSystem()
+{
+}
+
+void PhysicsSystem::registerComponent(PhysicsComponent* component)
+{
+	this->componentList.push_back(component);
+	this->componentTable.insert(std::pair<std::string, PhysicsComponent*>(component->getName(), component));
+}
+
+void PhysicsSystem::unregisterComponent(PhysicsComponent* component)
+{
+	this->componentList.erase(std::remove(componentList.begin(), componentList.end(), component), componentList.end());
+	for (auto it = this->componentTable.begin(); it != this->componentTable.end(); )
+	{
+		if (it->second == component) { this->componentTable.erase(it++); }
+		else { ++it; }
+	}
+}
+
+void PhysicsSystem::unregisterComponentByName(std::string name)
+{
+	PhysicsComponent* comp = this->componentTable[name];
+	this->componentTable.erase(name);
+	this->componentList.erase(std::remove(componentList.begin(), componentList.end(), comp), componentList.end());
+}
+
+PhysicsComponent* PhysicsSystem::findComponentByName(std::string name)
+{
+	return this->componentTable[name];
+}
+
+std::vector<PhysicsComponent*> PhysicsSystem::getAllComponents()
+{
+	return this->componentList;
+}
+
+void PhysicsSystem::updateAllComponents()
+{
+	for (int i = 0; i < this->componentList.size(); i++)
+	{
+		this->componentList[i]->perform(EngineTime::getDeltaTime());
+	}
+}
+
+reactphysics3d::PhysicsWorld* PhysicsSystem::getPhysicsWorld()
+{
+	return this->physicsWorld;
+}
+
+reactphysics3d::PhysicsCommon* PhysicsSystem::getPhysicsCommon()
+{
+	return this->physicsCommon;
+}

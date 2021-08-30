@@ -6,6 +6,8 @@
 #include <random>
 #include "UIManager.h"
 #include "GameObjectManager.h"
+#include "PhysicsSystem.h"
+#include "BaseComponentSystem.h"
 
 AppWindow* AppWindow::sharedInstance = nullptr;
 
@@ -46,11 +48,11 @@ void AppWindow::onLeftMouseDown(const Point& mouse_pos)
 
 	//find if any object collides with the raycast and get the one that is the closest to the raycast origin
 	float minT = INT_MAX;
-	int minIndex = -1;
+	/*int minIndex = -1;
 	float t;
 	//ortho raycast comes from cursor straight forward along z
 	//perspective raycast comes from camera position in the direction of raycast world
-	/*for (int i = 0; i < cubes.size(); i++)
+	for (int i = 0; i < cubes.size(); i++)
 	{
 		if (!isPerspective) 
 			t = cubes[i]->checkRaycast(raycastWorld + cam->getLocalPosition() + cam->getForwardVector() * (orthoNearPlane), cam->getForwardVector());
@@ -189,6 +191,7 @@ void AppWindow::onUpdate()
 
 	update();
 
+	BaseComponentSystem::getInstance()->getPhysicsSystem()->updateAllComponents();
 	GameObjectManager::getInstance()->updateAllGameObjects(m_delta_time);
 	GameObjectManager::getInstance()->drawAllGameObjects(m_cb);
 
@@ -196,8 +199,6 @@ void AppWindow::onUpdate()
 
 	m_swap_chain->present(true);
 
-	m_previous_time = m_current_time;
-	m_current_time = ::GetTickCount();
 	m_delta_time = EngineTime::getDeltaTime();
 }
 

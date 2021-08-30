@@ -72,3 +72,49 @@ void AGameObject::setName(std::string newName)
 {
     name = newName;
 }
+
+void AGameObject::attachComponent(AComponent* component)
+{
+    this->componentList.push_back(component);
+}
+
+void AGameObject::detachComponent(AComponent* component)
+{
+    this->componentList.erase(std::remove(componentList.begin(), componentList.end(), component), componentList.end());
+}
+
+AComponent* AGameObject::findComponentByName(std::string name)
+{
+    for (int i = 0; i < this->componentList.size(); i++)
+    {
+        if (this->componentList[i]->getName() == name)
+            return this->componentList[i];
+    }
+    return nullptr;
+}
+
+AComponent* AGameObject::findComponentOfType(AComponent::ComponentType type, std::string name)
+{
+    for (int i = 0; i < this->componentList.size(); i++)
+    {
+        if (this->componentList[i]->getName() == name && this->componentList[i]->getType() == type)
+            return this->componentList[i];
+    }
+    return nullptr;
+}
+
+std::vector<AComponent*> AGameObject::getComponentsOfType(AComponent::ComponentType type)
+{
+    std::vector<AComponent*> out;
+    for (int i = 0; i < this->componentList.size(); i++)
+    {
+        if (this->componentList[i]->getType() == type)
+            out.push_back(this->componentList[i]);
+    }
+    return out;
+}
+
+void AGameObject::awake()
+{
+
+}
