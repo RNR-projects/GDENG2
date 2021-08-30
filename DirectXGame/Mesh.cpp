@@ -9,6 +9,8 @@
 #include "GraphicsEngine.h"
 #include "VertexMesh.h"
 
+#include "Quaternion.h"
+
 
 Mesh::Mesh(const wchar_t* fullPath) : Resource(fullPath)
 {
@@ -36,7 +38,6 @@ Mesh::Mesh(const wchar_t* fullPath) : Resource(fullPath)
 		throw std::exception("Mesh not created successfully");
 	}
 
-	std::vector<VertexMesh> list_vertices;
 	std::vector<unsigned int> list_indices;
 	tinyobj::real_t highestTx = 0;
 	tinyobj::real_t highestTy = 0;
@@ -46,7 +47,6 @@ Mesh::Mesh(const wchar_t* fullPath) : Resource(fullPath)
 		size_t index_offset = 0;
 		list_vertices.reserve(shapes[s].mesh.indices.size());
 		list_indices.reserve(shapes[s].mesh.indices.size());
-		
 
 		for (size_t f = 0; f < shapes[s].mesh.num_face_vertices.size(); f++)
 		{
@@ -60,16 +60,24 @@ Mesh::Mesh(const wchar_t* fullPath) : Resource(fullPath)
 				tinyobj::real_t vy = attribs.vertices[index.vertex_index * 3 + 1];
 				tinyobj::real_t vz = attribs.vertices[index.vertex_index * 3 + 2];
 
-				tinyobj::real_t tx = attribs.texcoords[index.texcoord_index * 2 + 0];
-				tinyobj::real_t ty = attribs.texcoords[index.texcoord_index * 2 + 1];
+				if (!attribs.texcoords.empty())
+				{
+					tinyobj::real_t tx = attribs.texcoords[index.texcoord_index * 2 + 0];
+					tinyobj::real_t ty = attribs.texcoords[index.texcoord_index * 2 + 1];
 
-				if (tx > highestTx)
-					highestTx = tx;
-				if (ty > highestTy)
-					highestTy = ty;
+					if (tx > highestTx)
+						highestTx = tx;
+					if (ty > highestTy)
+						highestTy = ty;
 
-				VertexMesh vertex(Vector3D(vx, vy, vz), Vector2D(tx, ty));
-				list_vertices.push_back(vertex);
+					VertexMesh vertex(Vector3D(vx, vy, vz), Vector2D(tx, ty));
+					list_vertices.push_back(vertex);
+				}
+				else
+				{
+					VertexMesh vertex(Vector3D(vx, vy, vz), Vector2D(0, 0));
+					list_vertices.push_back(vertex);
+				}
 
 				list_indices.push_back((unsigned int)index_offset + v);
 			}
@@ -115,4 +123,43 @@ VertexBuffer* Mesh::getVertexBuffer()
 IndexBuffer* Mesh::getIndexBuffer()
 {
 	return m_index_buffer;
+}
+
+void Mesh::scaleVertexLocations(Vector3D scale)
+{
+	this->scale = scale;
+	
+	updateVertexLocations();
+}
+
+void Mesh::rotateVertexLocations(Vector3D rot)
+{
+	rotation = rot;
+	
+	updateVertexLocations();
+}
+
+void Mesh::moveVertexLocations(Vector3D pos)
+{
+	position = pos;
+	
+	updateVertexLocations();
+}
+
+void Mesh::updateVertexLocations()
+{
+	std::vector<VertexMesh> list = list_vertices;
+
+	for (int i = 0; i < list.size(); i++)
+	{
+		list[i].m_position = Vector3D(list[i].m_position.x * scale.x, list[i].m_position.y * scale.y, list[i].m_position.z * scale.z);
+		list[i].m_position = Quaternion::rotatePointEuler(list[i].m_position, rotation);
+		list[i].m_position = list[i].m_position + position;
+	}
+
+	void* shader_byte_code = nullptr;
+	size_t size_shader = 0;
+	GraphicsEngine::getInstance()->getVertexMeshLayoutShaderByteCodeAndSize(&shader_byte_code, &size_shader);
+	m_vertex_buffer = GraphicsEngine::getInstance()->getRenderSystem()->createVertexBuffer(&list[0], sizeof(VertexMesh),
+		(UINT)list.size(), shader_byte_code, size_shader);
 }
