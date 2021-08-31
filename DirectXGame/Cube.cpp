@@ -271,10 +271,6 @@ void Cube::updateVertexLocations()
 {
 	RenderSystem* graphEngine = GraphicsEngine::getInstance()->getRenderSystem();
 
-	void* shader_byte_code = nullptr;
-	size_t size_shader = 0;
-	graphEngine->compileVertexShader(L"VertexShader.hlsl", "vsmain", &shader_byte_code, &size_shader);
-
 	Vector3D* worldLocations = getVertexWorldPositions();
 
 	Vector3D positionList[] = {
@@ -332,8 +328,9 @@ void Cube::updateVertexLocations()
 
 	UINT size_list = ARRAYSIZE(vertexList);
 
+	void* shader_byte_code = nullptr;
+	size_t size_shader = 0;
+	GraphicsEngine::getInstance()->getVertexMeshLayoutShaderByteCodeAndSize(&shader_byte_code, &size_shader);
 	delete m_vb;
 	m_vb = graphEngine->createVertexBuffer(vertexList, sizeof(vertex), size_list, shader_byte_code, size_shader);
-
-	graphEngine->releaseCompiledShader();
 }

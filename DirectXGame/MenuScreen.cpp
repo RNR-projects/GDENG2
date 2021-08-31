@@ -30,7 +30,12 @@ void MenuScreen::drawUI()
 			}
 			if (ImGui::MenuItem("Plane")) 
 			{
-				GameObjectManager::getInstance()->addGameObject(new Plane("Plane", Vector3D(0,-1,0), Vector3D(5, 1, 5), Vector3D(), Vector3D())); 
+				GameObjectManager::getInstance()->addGameObject(new Plane("Plane", Vector3D(0,-2,0), Vector3D(15, 1, 15), Vector3D(), Vector3D())); 
+			}
+			if (ImGui::MenuItem("CubeBatch")) 
+			{
+				for (int i = 0; i < 20; i++)
+					GameObjectManager::getInstance()->addGameObject(new Cube("Cube", Vector3D(0,5,0), Vector3D(1, 1, 1), Vector3D(), Vector3D()));
 			}
 			if (ImGui::MenuItem("Teapot")) 
 			{

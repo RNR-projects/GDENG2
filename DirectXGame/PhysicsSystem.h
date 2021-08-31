@@ -27,5 +27,8 @@ private:
 
 	reactphysics3d::PhysicsCommon* physicsCommon;
 	reactphysics3d::PhysicsWorld* physicsWorld;
+
+	float delta;
+	float timeStep = 1.0f / 30.0f;
 };
 

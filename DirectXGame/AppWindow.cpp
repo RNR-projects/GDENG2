@@ -22,7 +22,7 @@ AppWindow::~AppWindow()
 
 void AppWindow::onLeftMouseDown(const Point& mouse_pos)
 {
-	POINT point = { mouse_pos.x, mouse_pos.y };
+	/*POINT point = {mouse_pos.x, mouse_pos.y};
 	ScreenToClient(this->m_hwnd, &point);
 
 	RECT rc = this->getClientWindowRect();
@@ -47,7 +47,7 @@ void AppWindow::onLeftMouseDown(const Point& mouse_pos)
 	}
 
 	//find if any object collides with the raycast and get the one that is the closest to the raycast origin
-	float minT = INT_MAX;
+	float minT = INT_MAX;*/
 	/*int minIndex = -1;
 	float t;
 	//ortho raycast comes from cursor straight forward along z
@@ -101,14 +101,14 @@ void AppWindow::onMouseMove(const Point& delta_mouse_pos)
 	rot_y += (mouse_pos.x - width / 2.0f) * m_delta_time * 0.25f;
 
 	InputSystem::getInstance()->setCursorPosition(Point(width / 2.0f, height / 2.0f));*/
-	if (selectedCube != nullptr)
+	/*if (selectedCube != nullptr)
 	{
 		Vector3D cubePos = selectedCube->getLocalPosition();
 		Matrix4x4 viewMat = cam->getViewMatrix();
 		Vector3D newPos = cubePos + viewMat.getXDirection() * delta_mouse_pos.x * 0.5f * m_delta_time - 
 							viewMat.getYDirection() * delta_mouse_pos.y * 0.5f * m_delta_time;
 		selectedCube->setPosition(newPos);
-	}
+	}*/
 }
 
 void AppWindow::onKeyDown(int key)

@@ -17,14 +17,17 @@ Plane::Plane(std::string name, Vector3D pos, Vector3D scale, Vector3D color, Vec
 	this->localRotation = rot;
 	this->localScale.y = 0.1f;
 
-	edges[0] = Vector3D(-this->localScale.x / 2.0f, 0.1f, -this->localScale.z / 2.0f);
-	edges[1] = Vector3D(-this->localScale.x / 2.0f, 0.2f, this->localScale.z / 2.0f);
-	edges[2] = Vector3D(this->localScale.x / 2.0f, 0.1f, -this->localScale.z / 2.0f);
-	edges[3] = Vector3D(this->localScale.x / 2.0f, 0.2f, this->localScale.z / 2.0f);
+	edges[0] = Vector3D(-this->localScale.x / 2.0f, -0.05f, -this->localScale.z / 2.0f);
+	edges[1] = Vector3D(-this->localScale.x / 2.0f, 0.05f, this->localScale.z / 2.0f);
+	edges[2] = Vector3D(this->localScale.x / 2.0f, -0.05f, -this->localScale.z / 2.0f);
+	edges[3] = Vector3D(this->localScale.x / 2.0f, 0.05f, this->localScale.z / 2.0f);
 
 	RenderSystem* graphEngine = GraphicsEngine::getInstance()->getRenderSystem();
 
-	this->attachComponent(new PhysicsComponent("planePhysics", this));
+	PhysicsComponent* comp = new PhysicsComponent("planePhysics", this);
+	this->attachComponent(comp);
+	comp->getRigidBody()->setType(reactphysics3d::BodyType::STATIC);
+	
 	tex = GraphicsEngine::getInstance()->getTextureManager()->createTextureFromFile(L"Assets\\Textures\\sand.jpg");
 
 	void* shader_byte_code = nullptr;
@@ -97,20 +100,22 @@ void Plane::draw(ConstantBuffer* cb)
 
 void Plane::setScale(float x, float y, float z)
 {
-	edges[0] = Vector3D(-x / 2.0f, 0.1f, -z / 2.0f);
-	edges[1] = Vector3D(-x / 2.0f, 0.1f, z / 2.0f);
-	edges[2] = Vector3D(x / 2.0f, 0.1f, -z / 2.0f);
-	edges[3] = Vector3D(x / 2.0f, 0.1f, z / 2.0f);
+	edges[0] = Vector3D(-x / 2.0f, -0.05f, -z / 2.0f);
+	edges[1] = Vector3D(-x / 2.0f, 0.05f, z / 2.0f);
+	edges[2] = Vector3D(x / 2.0f, -0.05f, -z / 2.0f);
+	edges[3] = Vector3D(x / 2.0f, 0.05f, z / 2.0f);
+	this->localScale.y = 0.1f;
 
 	AGameObject::setScale(x, y, z);
 }
 
 void Plane::setScale(Vector3D scale)
 {
-	edges[0] = Vector3D(-scale.x / 2.0f, 0.1f, -scale.z / 2.0f);
-	edges[1] = Vector3D(-scale.x / 2.0f, 0.1f, scale.z / 2.0f);
-	edges[2] = Vector3D(scale.x / 2.0f, 0.1f, -scale.z / 2.0f);
-	edges[3] = Vector3D(scale.x / 2.0f, 0.1f, scale.z / 2.0f);
+	edges[0] = Vector3D(-scale.x / 2.0f, -0.05f, -scale.z / 2.0f);
+	edges[1] = Vector3D(-scale.x / 2.0f, 0.05f, scale.z / 2.0f);
+	edges[2] = Vector3D(scale.x / 2.0f, -0.05f, -scale.z / 2.0f);
+	edges[3] = Vector3D(scale.x / 2.0f, 0.05f, scale.z / 2.0f);
+	this->localScale.y = 0.1f;
 
 	AGameObject::setScale(scale);
 }
@@ -131,10 +136,6 @@ void Plane::updateVertexLocations()
 {
 	RenderSystem* graphEngine = GraphicsEngine::getInstance()->getRenderSystem();
 
-	void* shader_byte_code = nullptr;
-	size_t size_shader = 0;
-	graphEngine->compileVertexShader(L"VertexShader.hlsl", "vsmain", &shader_byte_code, &size_shader);
-
 	Vector3D* worldLocations = getVertexWorldPositions();
 
 	vertex list[] = {
@@ -146,8 +147,9 @@ void Plane::updateVertexLocations()
 
 	UINT size_list = ARRAYSIZE(list);
 
+	void* shader_byte_code = nullptr;
+	size_t size_shader = 0;
+	GraphicsEngine::getInstance()->getVertexMeshLayoutShaderByteCodeAndSize(&shader_byte_code, &size_shader);
 	delete m_vb;
 	m_vb = graphEngine->createVertexBuffer(list, sizeof(vertex), size_list, shader_byte_code, size_shader);
-
-	GraphicsEngine::getInstance()->getRenderSystem()->releaseCompiledShader();
 }

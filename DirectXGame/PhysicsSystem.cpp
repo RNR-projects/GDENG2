@@ -11,25 +11,39 @@ PhysicsSystem::PhysicsSystem()
 	settings.gravity = reactphysics3d::Vector3(0, -9.81, 0);
 	this->physicsWorld = this->physicsCommon->createPhysicsWorld(settings);
 	std::cout << "Successfully created physics world \n";
+	delta = -1;
 }
 
 PhysicsSystem::~PhysicsSystem()
 {
+	this->physicsCommon->destroyPhysicsWorld(this->physicsWorld);
+	delete this->physicsCommon;
 }
 
 void PhysicsSystem::registerComponent(PhysicsComponent* component)
 {
 	this->componentList.push_back(component);
-	this->componentTable.insert(std::pair<std::string, PhysicsComponent*>(component->getName(), component));
+	this->componentTable[component->getName()] = component;
 }
 
 void PhysicsSystem::unregisterComponent(PhysicsComponent* component)
 {
-	this->componentList.erase(std::remove(componentList.begin(), componentList.end(), component), componentList.end());
-	for (auto it = this->componentTable.begin(); it != this->componentTable.end(); )
+	if (this->componentTable[component->getName()] != nullptr)
 	{
-		if (it->second == component) { this->componentTable.erase(it++); }
-		else { ++it; }
+		this->componentTable.erase(component->getName());
+		int index = -1;
+		for (int i = 0; i < this->componentList.size(); i++)
+		{
+			if (this->componentList[i] == component)
+			{
+				index = i;
+				break;
+			}
+		}
+		if (index != -1)
+		{
+			this->componentList.erase(this->componentList.begin() + index);
+		}
 	}
 }
 
@@ -52,9 +66,22 @@ std::vector<PhysicsComponent*> PhysicsSystem::getAllComponents()
 
 void PhysicsSystem::updateAllComponents()
 {
-	for (int i = 0; i < this->componentList.size(); i++)
+	if (delta == -1)
 	{
-		this->componentList[i]->perform(EngineTime::getDeltaTime());
+		delta = 0;
+	}
+	else
+	{
+		delta += EngineTime::getDeltaTime();
+		while (delta >= timeStep)
+		{
+			this->physicsWorld->update(timeStep);
+			for (int i = 0; i < this->componentList.size(); i++)
+			{
+				this->componentList[i]->perform(timeStep);
+			}
+			delta -= timeStep;
+		}
 	}
 }
 
