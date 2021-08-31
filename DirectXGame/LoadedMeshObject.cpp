@@ -10,14 +10,14 @@
 #include "Texture.h"
 #include "Mesh.h"
 
-LoadedMeshObject::LoadedMeshObject(std::string name, Vector3D pos, Vector3D scale, Vector3D rot) : AGameObject(name)
+LoadedMeshObject::LoadedMeshObject(std::string name, Vector3D pos, Vector3D scale, Vector3D rot, const wchar_t* objPath) : AGameObject(name)
 {
 	this->localPosition = pos;
 	this->localScale = scale;
 	this->localRotation = rot;
 
 	m_wood_tex = GraphicsEngine::getInstance()->getTextureManager()->createTextureFromFile(L"Assets\\Textures\\brick.png");
-	m_mesh = GraphicsEngine::getInstance()->getMeshManager()->creatMeshFromFile(L"Assets\\Meshes\\teapot.obj");
+	m_mesh = GraphicsEngine::getInstance()->getMeshManager()->creatMeshFromFile(objPath);
 
 	RenderSystem* graphEngine = GraphicsEngine::getInstance()->getRenderSystem();
 
@@ -66,6 +66,42 @@ void LoadedMeshObject::draw(ConstantBuffer* cb)
 
 		GraphicsEngine::getInstance()->getRenderSystem()->getImmediateDeviceContext()->drawIndexedTriangleList(m_mesh->getIndexBuffer()->getSizeIndexList(), 0, 0);
 	}
+}
+
+void LoadedMeshObject::setPosition(float x, float y, float z)
+{
+	AGameObject::setPosition(x, y, z);
+	m_mesh->moveVertexLocations(Vector3D(x, y, z));
+}
+
+void LoadedMeshObject::setPosition(Vector3D pos)
+{
+	AGameObject::setPosition(pos);
+	m_mesh->moveVertexLocations(pos);
+}
+
+void LoadedMeshObject::setScale(float x, float y, float z)
+{
+	AGameObject::setScale(x, y, z);
+	m_mesh->scaleVertexLocations(Vector3D(x, y, z));
+}
+
+void LoadedMeshObject::setScale(Vector3D scale)
+{
+	AGameObject::setScale(scale);
+	m_mesh->scaleVertexLocations(scale);
+}
+
+void LoadedMeshObject::setRotation(float x, float y, float z)
+{
+	AGameObject::setRotation(x, y, z);
+	m_mesh->rotateVertexLocations(Vector3D(x, y, z));
+}
+
+void LoadedMeshObject::setRotation(Vector3D rot)
+{
+	AGameObject::setRotation(rot);
+	m_mesh->rotateVertexLocations(rot);
 }
 
 void LoadedMeshObject::updateVertexLocations()

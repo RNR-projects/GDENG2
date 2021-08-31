@@ -6,6 +6,8 @@
 #include <random>
 #include "UIManager.h"
 #include "GameObjectManager.h"
+#include "PhysicsSystem.h"
+#include "BaseComponentSystem.h"
 
 AppWindow* AppWindow::sharedInstance = nullptr;
 
@@ -20,7 +22,7 @@ AppWindow::~AppWindow()
 
 void AppWindow::onLeftMouseDown(const Point& mouse_pos)
 {
-	POINT point = { mouse_pos.x, mouse_pos.y };
+	/*POINT point = {mouse_pos.x, mouse_pos.y};
 	ScreenToClient(this->m_hwnd, &point);
 
 	RECT rc = this->getClientWindowRect();
@@ -45,12 +47,12 @@ void AppWindow::onLeftMouseDown(const Point& mouse_pos)
 	}
 
 	//find if any object collides with the raycast and get the one that is the closest to the raycast origin
-	float minT = INT_MAX;
-	int minIndex = -1;
+	float minT = INT_MAX;*/
+	/*int minIndex = -1;
 	float t;
 	//ortho raycast comes from cursor straight forward along z
 	//perspective raycast comes from camera position in the direction of raycast world
-	/*for (int i = 0; i < cubes.size(); i++)
+	for (int i = 0; i < cubes.size(); i++)
 	{
 		if (!isPerspective) 
 			t = cubes[i]->checkRaycast(raycastWorld + cam->getLocalPosition() + cam->getForwardVector() * (orthoNearPlane), cam->getForwardVector());
@@ -99,14 +101,14 @@ void AppWindow::onMouseMove(const Point& delta_mouse_pos)
 	rot_y += (mouse_pos.x - width / 2.0f) * m_delta_time * 0.25f;
 
 	InputSystem::getInstance()->setCursorPosition(Point(width / 2.0f, height / 2.0f));*/
-	if (selectedCube != nullptr)
+	/*if (selectedCube != nullptr)
 	{
 		Vector3D cubePos = selectedCube->getLocalPosition();
 		Matrix4x4 viewMat = cam->getViewMatrix();
 		Vector3D newPos = cubePos + viewMat.getXDirection() * delta_mouse_pos.x * 0.5f * m_delta_time - 
 							viewMat.getYDirection() * delta_mouse_pos.y * 0.5f * m_delta_time;
 		selectedCube->setPosition(newPos);
-	}
+	}*/
 }
 
 void AppWindow::onKeyDown(int key)
@@ -189,6 +191,7 @@ void AppWindow::onUpdate()
 
 	update();
 
+	BaseComponentSystem::getInstance()->getPhysicsSystem()->updateAllComponents();
 	GameObjectManager::getInstance()->updateAllGameObjects(m_delta_time);
 	GameObjectManager::getInstance()->drawAllGameObjects(m_cb);
 
@@ -196,8 +199,6 @@ void AppWindow::onUpdate()
 
 	m_swap_chain->present(true);
 
-	m_previous_time = m_current_time;
-	m_current_time = ::GetTickCount();
 	m_delta_time = EngineTime::getDeltaTime();
 }
 
@@ -232,15 +233,6 @@ void AppWindow::createGraphicsWindow()
 	int width = rc.right - rc.left;
 	int height = rc.bottom - rc.top;
 	m_swap_chain = GraphicsEngine::getInstance()->getRenderSystem()->createSwapChain(this->m_hwnd, width, height);	
-
-	for (int i = 0; i < 3; i++)
-	{
-		Vector3D loc = Vector3D(rand() % 200 / 100.0f - 1.0f, rand() % 200 / 100.0f - 1.0f, rand() % 200 / 100.0f - 1.0f);
-		Cube* cubey = new Cube("Cube " + i, loc, Vector3D(1, 1, 1), Vector3D(0, 1, 1), Vector3D());
-		GameObjectManager::getInstance()->addGameObject(cubey);
-	}
-	//GameObjectManager::getInstance()->addGameObject(new Plane("Plane", Vector3D(0, -0.25f, 0), Vector3D(3, 1, 3), Vector3D(1, 1, 0), Vector3D(0,0,0)));
-	GameObjectManager::getInstance()->addGameObject(new LoadedMeshObject("Mesh", Vector3D(), Vector3D(1, 1, 1), Vector3D()));
 
 	UIManager::initialize(this->m_hwnd);
 

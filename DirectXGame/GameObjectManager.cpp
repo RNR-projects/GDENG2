@@ -25,6 +25,7 @@ void GameObjectManager::destroy()
 void GameObjectManager::addGameObject(AGameObject* gameObject)
 {
     gameObjectList.push_back(gameObject);
+    gameObjectNames.push_back(gameObject->getName());
 }
 
 void GameObjectManager::updateAllGameObjects(float deltaTime)
@@ -41,6 +42,26 @@ void GameObjectManager::drawAllGameObjects(ConstantBuffer* cb)
     {
         gameObjectList[i]->draw(cb);
     }
+}
+
+std::vector<std::string> GameObjectManager::getGameObjectNames()
+{
+    return gameObjectNames;
+}
+
+void GameObjectManager::selectObject(int index)
+{
+    selectedObject = gameObjectList[index];
+}
+
+void GameObjectManager::selectObject(AGameObject* gameObject)
+{
+    selectedObject = gameObject;
+}
+
+AGameObject* GameObjectManager::getSelectedObject()
+{
+    return selectedObject;
 }
 
 GameObjectManager::GameObjectManager()

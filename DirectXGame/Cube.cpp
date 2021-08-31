@@ -10,6 +10,7 @@
 #include <random>
 #include "RenderSystem.h"
 #include "Texture.h"
+#include "PhysicsComponent.h"
 
 Cube::Cube(std::string name, Vector3D pos, Vector3D scale, Vector3D color, Vector3D rot) : AGameObject(name)
 {
@@ -27,6 +28,7 @@ Cube::Cube(std::string name, Vector3D pos, Vector3D scale, Vector3D color, Vecto
 	this->colors2[6] = Vector3D(1, 1, 1);
 	this->colors2[7] = Vector3D(0, 0, 0);*/
 
+	this->attachComponent(new PhysicsComponent("cubePhysics", this));
 	m_wood_tex = GraphicsEngine::getInstance()->getTextureManager()->createTextureFromFile(L"Assets\\Textures\\wood.jpg");
 
 	edges[0] = Vector3D(-this->localScale.x / 2.0f, -this->localScale.y / 2.0f, -this->localScale.z / 2.0f);
@@ -161,13 +163,13 @@ Cube::~Cube()
 void Cube::setPosition(float x, float y, float z)
 {
 	AGameObject::setPosition(x, y, z);
-	collisionBox->setPosition(this->localPosition);
+	//collisionBox->setPosition(this->localPosition);
 }
 
 void Cube::setPosition(Vector3D pos)
 {
 	AGameObject::setPosition(pos);
-	collisionBox->setPosition(this->localPosition);
+	//collisionBox->setPosition(this->localPosition);
 }
 
 void Cube::setScale(float x, float y, float z)
@@ -197,7 +199,7 @@ void Cube::setScale(Vector3D newScale)
 	edges[7] = Vector3D(-newScale.x / 2.0f, -newScale.y / 2.0f, newScale.z / 2.0f);
 
 	AGameObject::setScale(newScale);
-	collisionBox->setDimensions(1.0f * this->localScale.x, 1.0f * this->localScale.y, 1.0f * this->localScale.z);
+	//collisionBox->setDimensions(1.0f * this->localScale.x, 1.0f * this->localScale.y, 1.0f * this->localScale.z);
 }
 
 void Cube::setColors(Vector3D color)
@@ -210,13 +212,13 @@ void Cube::setColors(Vector3D color)
 void Cube::setRotation(float x, float y, float z)
 {
 	AGameObject::setRotation(x, y, z);
-	collisionBox->setRotation(Vector3D(x, y, z));
+	//collisionBox->setRotation(Vector3D(x, y, z));
 }
 
 void Cube::setRotation(Vector3D rotation)
 {
 	AGameObject::setRotation(rotation);
-	collisionBox->setRotation(rotation);
+	//collisionBox->setRotation(rotation);
 }
 
 void Cube::update(float deltaTime)
@@ -268,10 +270,6 @@ float Cube::checkRaycast(Vector3D rayOrigin, Vector3D rayDirection)
 void Cube::updateVertexLocations()
 {
 	RenderSystem* graphEngine = GraphicsEngine::getInstance()->getRenderSystem();
-
-	void* shader_byte_code = nullptr;
-	size_t size_shader = 0;
-	graphEngine->compileVertexShader(L"VertexShader.hlsl", "vsmain", &shader_byte_code, &size_shader);
 
 	Vector3D* worldLocations = getVertexWorldPositions();
 
@@ -330,8 +328,9 @@ void Cube::updateVertexLocations()
 
 	UINT size_list = ARRAYSIZE(vertexList);
 
+	void* shader_byte_code = nullptr;
+	size_t size_shader = 0;
+	GraphicsEngine::getInstance()->getVertexMeshLayoutShaderByteCodeAndSize(&shader_byte_code, &size_shader);
 	delete m_vb;
 	m_vb = graphEngine->createVertexBuffer(vertexList, sizeof(vertex), size_list, shader_byte_code, size_shader);
-
-	graphEngine->releaseCompiledShader();
 }

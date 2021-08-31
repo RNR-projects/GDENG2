@@ -26,5 +26,7 @@ private:
 	class VertexShader* m_vs;
 	class PixelShader* m_ps;
 	class IndexBuffer* m_ib;
+
+	class Texture* tex;
 };
 
