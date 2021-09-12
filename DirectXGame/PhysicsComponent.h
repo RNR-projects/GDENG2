@@ -5,7 +5,7 @@
 class PhysicsComponent : public AComponent
 {
 public:
-	PhysicsComponent(std::string name, AGameObject* owner);
+	PhysicsComponent(std::string name, AGameObject* owner, bool isSphere = false);
 	~PhysicsComponent();
 
 	void perform(float deltaTime) override;

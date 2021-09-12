@@ -8,6 +8,7 @@
 #include "GameObjectManager.h"
 #include "PhysicsSystem.h"
 #include "BaseComponentSystem.h"
+#include "EngineBackend.h"
 
 AppWindow* AppWindow::sharedInstance = nullptr;
 
@@ -189,10 +190,29 @@ void AppWindow::onUpdate()
 	int height = rc.bottom - rc.top;
 	GraphicsEngine::getInstance()->getRenderSystem()->getImmediateDeviceContext()->setViewportSize(width, height);
 
+	EngineBackend* backend = EngineBackend::getInstance();
+
 	update();
 
-	BaseComponentSystem::getInstance()->getPhysicsSystem()->updateAllComponents();
-	GameObjectManager::getInstance()->updateAllGameObjects(m_delta_time);
+	if (backend->getMode() == EngineBackend::EditorMode::PLAY)
+	{
+		BaseComponentSystem::getInstance()->getPhysicsSystem()->updateAllComponents();
+		GameObjectManager::getInstance()->updateAllGameObjects(m_delta_time);
+	}
+	else if (backend->getMode() == EngineBackend::EditorMode::EDITOR)
+	{
+		GameObjectManager::getInstance()->updateAllGameObjects(m_delta_time);
+	}
+	else if (backend->getMode() == EngineBackend::EditorMode::PAUSED)
+	{
+		if (backend->insideFrameStep())
+		{
+			BaseComponentSystem::getInstance()->getPhysicsSystem()->updateAllComponents();
+			GameObjectManager::getInstance()->updateAllGameObjects(m_delta_time);
+			backend->endFrameStep();
+		}
+	}
+
 	GameObjectManager::getInstance()->drawAllGameObjects(m_cb);
 
 	UIManager::getInstance()->drawAllUI();
@@ -233,6 +253,8 @@ void AppWindow::createGraphicsWindow()
 	int width = rc.right - rc.left;
 	int height = rc.bottom - rc.top;
 	m_swap_chain = GraphicsEngine::getInstance()->getRenderSystem()->createSwapChain(this->m_hwnd, width, height);	
+
+	EngineBackend::initialize();
 
 	UIManager::initialize(this->m_hwnd);
 

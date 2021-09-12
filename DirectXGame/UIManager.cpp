@@ -5,6 +5,7 @@
 #include "InspectorScreen.h"
 #include "HierarchyScreen.h"
 #include "RenderSystem.h"
+#include "EditorPlayScreen.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
@@ -116,6 +117,10 @@ UIManager::UIManager(HWND windowHandle)
     HierarchyScreen* hierarchyScreen = new HierarchyScreen();
     this->uiTable[uiNames.HIERARCHY_SCREEN] = hierarchyScreen;
     this->uiList.push_back(hierarchyScreen);
+    
+    EditorPlayScreen* editorPlayScreen = new EditorPlayScreen();
+    this->uiTable[uiNames.EDITOR_PLAY_SCREEN] = editorPlayScreen;
+    this->uiList.push_back(editorPlayScreen);
 }
 
 UIManager::~UIManager()

@@ -6,6 +6,7 @@
 #include "Cube.h"
 #include "Plane.h"
 #include "LoadedMeshObject.h"
+#include "Sphere.h"
 
 MenuScreen::MenuScreen() : AUIScreen("Menu")
 {
@@ -31,6 +32,10 @@ void MenuScreen::drawUI()
 			if (ImGui::MenuItem("Plane")) 
 			{
 				GameObjectManager::getInstance()->addGameObject(new Plane("Plane", Vector3D(0,-2,0), Vector3D(15, 1, 15), Vector3D(), Vector3D())); 
+			}
+			if (ImGui::MenuItem("Sphere")) 
+			{
+				GameObjectManager::getInstance()->addGameObject(new Sphere("Sphere", Vector3D(), 1, 5)); 
 			}
 			if (ImGui::MenuItem("CubeBatch")) 
 			{
