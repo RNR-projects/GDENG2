@@ -7,24 +7,52 @@
 #include "Plane.h"
 #include "LoadedMeshObject.h"
 #include "Sphere.h"
+#include "SceneReader.h"
+#include "SceneWriter.h"
 
 MenuScreen::MenuScreen() : AUIScreen("Menu")
 {
+	this->openSceneDialog = new ImGui::FileBrowser();
+	this->openSceneDialog->SetTitle("Open Scene");
+	this->openSceneDialog->SetTypeFilters({ ".level" });
+
+	this->saveSceneDialog = new ImGui::FileBrowser(ImGuiFileBrowserFlags_EnterNewFilename);
+	this->saveSceneDialog->SetTitle("Save Scene");
+	this->saveSceneDialog->SetTypeFilters({ ".level" });
+
+	SceneReader::initialize();
+	SceneWriter::initialize();
 }
 
 MenuScreen::~MenuScreen()
 {
+	delete this->openSceneDialog;
+	delete this->saveSceneDialog;
 }
 
 void MenuScreen::drawUI()
 {
-	if (ImGui::BeginMainMenuBar()) {
-		if (ImGui::BeginMenu("File")) {
-			if (ImGui::MenuItem("Open..", "Ctrl+O")) {  }
-			if (ImGui::MenuItem("Save", "Ctrl+S")) {  }
+	if (ImGui::BeginMainMenuBar()) 
+	{
+		if (ImGui::BeginMenu("File")) 
+		{
+			if (ImGui::MenuItem("Open..", "Ctrl+O")) 
+			{
+				this->openSceneDialog->Open();
+			}
+			if (ImGui::MenuItem("Save", "Ctrl+S")) 
+			{
+				this->saveSceneDialog->Open();
+			}
+			if (ImGui::MenuItem("Save As...", "Ctrl+Shift+S")) 
+			{
+				this->saveSceneDialog->Open();
+			}
+			if (ImGui::MenuItem("Exit Editor", "Ctrl+W")) {/*Do something */ }
 			ImGui::EndMenu();
 		}
-		if (ImGui::BeginMenu("Game Object")) {
+		if (ImGui::BeginMenu("Game Object")) 
+		{
 			if (ImGui::MenuItem("Cube")) 
 			{ 
 				GameObjectManager::getInstance()->addGameObject(new Cube("Cube", Vector3D(), Vector3D(1, 1, 1), Vector3D(), Vector3D())); 
@@ -57,5 +85,26 @@ void MenuScreen::drawUI()
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();
+	}
+
+	this->openSceneDialog->Display();
+	this->saveSceneDialog->Display();
+
+	if (this->saveSceneDialog->HasSelected())
+	{
+		SceneWriter::getInstance()->setDirectory(this->saveSceneDialog->GetSelected().string());
+		SceneWriter::getInstance()->writeToFile();
+
+		this->saveSceneDialog->ClearSelected();
+		this->saveSceneDialog->Close();
+	}
+
+	else if (this->openSceneDialog->HasSelected()) 
+	{
+		SceneReader::getInstance()->setDirectory(this->openSceneDialog->GetSelected().string());
+		SceneReader::getInstance()->readFromFile();
+
+		this->openSceneDialog->ClearSelected();
+		this->openSceneDialog->Close();
 	}
 }

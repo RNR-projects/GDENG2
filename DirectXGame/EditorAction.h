@@ -11,12 +11,12 @@ public:
 	std::string getOwnerName();
 	Vector3D getStorePos();
 	Vector3D getStoredScale();
-	Quaternion getStoredOrientation();
+	Vector3D getStoredOrientation();
 
 private:
 	std::string objectName;
 	Vector3D localPosition;
 	Vector3D localScale;
-	Quaternion orientation;
+	Vector3D orientation;
 };
 

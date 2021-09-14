@@ -17,6 +17,7 @@ public:
 	void drawAllGameObjects(ConstantBuffer* cb);
 
 	std::vector<std::string> getGameObjectNames();
+	std::vector<AGameObject*> getAllObjects();
 
 	void selectObject(int index);
 	void selectObject(AGameObject* gameObject);

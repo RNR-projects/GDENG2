@@ -12,7 +12,7 @@
 #include "Texture.h"
 #include "PhysicsComponent.h"
 
-Cube::Cube(std::string name, Vector3D pos, Vector3D scale, Vector3D color, Vector3D rot) : AGameObject(name)
+Cube::Cube(std::string name, Vector3D pos, Vector3D scale, Vector3D color, Vector3D rot) : AGameObject(name, AGameObject::PrimitiveType::CUBE)
 {
 	this->localPosition = pos;
 	this->localScale = scale;

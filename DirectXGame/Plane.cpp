@@ -9,7 +9,7 @@
 #include "RenderSystem.h"
 #include "PhysicsComponent.h"
 
-Plane::Plane(std::string name, Vector3D pos, Vector3D scale, Vector3D color, Vector3D rot) : AGameObject(name)
+Plane::Plane(std::string name, Vector3D pos, Vector3D scale, Vector3D color, Vector3D rot) : AGameObject(name, AGameObject::PrimitiveType::PLANE)
 {
 	this->localPosition = pos;
 	this->localScale = scale;

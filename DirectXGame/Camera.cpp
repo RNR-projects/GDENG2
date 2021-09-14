@@ -1,7 +1,7 @@
 #include "Camera.h"
 #include "InputSystem.h"
 
-Camera::Camera(std::string name) : AGameObject(name)
+Camera::Camera(std::string name) : AGameObject(name, AGameObject::PrimitiveType::CAMERA)
 {
 	InputSystem::getInstance()->addListener(this);
 	viewMatrix.setIdentity();

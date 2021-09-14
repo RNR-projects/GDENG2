@@ -26,8 +26,23 @@ void GameObjectManager::destroy()
 
 void GameObjectManager::addGameObject(AGameObject* gameObject)
 {
+    if (findObjectByName(gameObject->getName()) != nullptr) 
+    {
+        int count = 1;
+        std::string revisedString = gameObject->getName() + " " + "(" + std::to_string(count) + ")";
+        while (findObjectByName(revisedString) != nullptr) 
+        {
+            count++;
+            revisedString = gameObject->getName() + " " + "(" + std::to_string(count) + ")";
+        }
+        gameObject->setName(revisedString);
+        gameObjectNames.push_back(revisedString);
+    }
+    else 
+    {
+        gameObjectNames.push_back(gameObject->getName());
+    }
     gameObjectList.push_back(gameObject);
-    gameObjectNames.push_back(gameObject->getName());
 }
 
 void GameObjectManager::updateAllGameObjects(float deltaTime)
@@ -49,6 +64,11 @@ void GameObjectManager::drawAllGameObjects(ConstantBuffer* cb)
 std::vector<std::string> GameObjectManager::getGameObjectNames()
 {
     return gameObjectNames;
+}
+
+std::vector<AGameObject*> GameObjectManager::getAllObjects()
+{
+    return gameObjectList;
 }
 
 void GameObjectManager::selectObject(int index)
@@ -86,7 +106,7 @@ void GameObjectManager::applyEditorAction(EditorAction* action, bool isUndo)
         ActionHistory::getInstance()->recordAction(object, isUndo);
 
         object->setPosition(action->getStorePos());
-        object->setRotation(action->getStoredOrientation().i, action->getStoredOrientation().j, action->getStoredOrientation().k);
+        object->setRotation(action->getStoredOrientation());
         object->setScale(action->getStoredScale());
     }
 }

@@ -10,7 +10,7 @@
 #include "Texture.h"
 #include "Mesh.h"
 
-LoadedMeshObject::LoadedMeshObject(std::string name, Vector3D pos, Vector3D scale, Vector3D rot, const wchar_t* objPath) : AGameObject(name)
+LoadedMeshObject::LoadedMeshObject(std::string name, Vector3D pos, Vector3D scale, Vector3D rot, const wchar_t* objPath) : AGameObject(name, AGameObject::PrimitiveType::CAPSULE)
 {
 	this->localPosition = pos;
 	this->localScale = scale;

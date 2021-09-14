@@ -3,9 +3,6 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tiny_obj_loader.h>
 
-#include <locale>
-#include <codecvt>
-
 #include "GraphicsEngine.h"
 #include "VertexMesh.h"
 
@@ -21,9 +18,8 @@ Mesh::Mesh(const wchar_t* fullPath) : Resource(fullPath)
 	std::string warn;
 	std::string err;
 
-	std::string inputfile = std::wstring_convert<std::codecvt_utf8<wchar_t>>().to_bytes(fullPath);
-
-	bool res = tinyobj::LoadObj(&attribs, &shapes, &materials, &warn, &err, inputfile.c_str());
+	std::string inputFile(((std::wstring)fullPath).begin(), ((std::wstring)fullPath).end());
+	bool res = tinyobj::LoadObj(&attribs, &shapes, &materials, &warn, &err, inputFile.c_str());
 
 	if (!err.empty())
 	{
