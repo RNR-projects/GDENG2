@@ -4,6 +4,7 @@
 #include "ImGui/imgui_impl_win32.h"
 #include "GameObjectManager.h"
 #include "AGameObject.h"
+#include "ActionHistory.h"
 
 InspectorScreen::InspectorScreen() : AUIScreen("Inspector")
 {
@@ -48,17 +49,26 @@ void InspectorScreen::drawUI()
 void InspectorScreen::updatePosition()
 {
 	if (selectedObject != nullptr)
+	{
+		ActionHistory::getInstance()->recordAction(this->selectedObject, false);
 		selectedObject->setPosition(Vector3D(pos[0], pos[1], pos[2]));
+	}
 }
 
 void InspectorScreen::updateRotation()
 {
 	if (selectedObject != nullptr)
+	{
+		ActionHistory::getInstance()->recordAction(this->selectedObject, false);
 		selectedObject->setRotation(Vector3D(rot[0], rot[1], rot[2]));
+	}
 }
 
 void InspectorScreen::updateScale()
 {
 	if (selectedObject != nullptr)
+	{
+		ActionHistory::getInstance()->recordAction(this->selectedObject, false);
 		selectedObject->setScale(Vector3D(scale[0], scale[1], scale[2]));
+	}
 }

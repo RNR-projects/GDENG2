@@ -6,6 +6,7 @@
 #include "HierarchyScreen.h"
 #include "RenderSystem.h"
 #include "EditorPlayScreen.h"
+#include "EditorUndoScreen.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
 
@@ -121,6 +122,10 @@ UIManager::UIManager(HWND windowHandle)
     EditorPlayScreen* editorPlayScreen = new EditorPlayScreen();
     this->uiTable[uiNames.EDITOR_PLAY_SCREEN] = editorPlayScreen;
     this->uiList.push_back(editorPlayScreen);
+    
+    EditorUndoScreen* editorUndoScreen = new EditorUndoScreen();
+    this->uiTable[uiNames.EDITOR_UNDO_SCREEN] = editorUndoScreen;
+    this->uiList.push_back(editorUndoScreen);
 }
 
 UIManager::~UIManager()

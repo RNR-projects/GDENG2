@@ -18,6 +18,7 @@ public:
 	const std::string INSPECTOR_SCREEN = "INSPECTOR_SCREEN";
 	const std::string HIERARCHY_SCREEN = "HIERARCHY_SCREEN";
 	const std::string EDITOR_PLAY_SCREEN = "EDITOR_PLAY_SCREEN";
+	const std::string EDITOR_UNDO_SCREEN = "EDITOR_UNDO_SCREEN";
 };
 
 class UIManager

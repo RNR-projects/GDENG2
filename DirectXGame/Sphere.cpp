@@ -21,7 +21,7 @@ Sphere::Sphere(std::string name, Vector3D pos, float radius, int tessellationLev
 	this->tessellationLevel = tessellationLevel;
 
 	this->attachComponent(new PhysicsComponent("spherePhysics", this, true));
-	m_wood_tex = GraphicsEngine::getInstance()->getTextureManager()->createTextureFromFile(L"Assets\\Textures\\wood.jpg");
+	m_wood_tex = GraphicsEngine::getInstance()->getTextureManager()->createTextureFromFile(L"Assets\\Textures\\blank.jpg");
 
 	generateEdgesAtTessellation(tessellationLevel);
 

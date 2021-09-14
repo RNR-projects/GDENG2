@@ -17,6 +17,7 @@ void EditorPlayScreen::drawUI()
 {
 	EngineBackend* backend = EngineBackend::getInstance();
 	ImGui::Begin("Scene Play Options");
+	ImGui::SameLine();
 	if (backend->getMode() == EngineBackend::EditorMode::EDITOR)
 	{
 		if (ImGui::Button("Play", ImVec2(100, 50))) { backend->playEditor(); }

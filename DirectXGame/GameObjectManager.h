@@ -23,6 +23,10 @@ public:
 
 	AGameObject* getSelectedObject();
 
+	AGameObject* findObjectByName(std::string name);
+
+	void applyEditorAction(class EditorAction* action, bool isUndo);
+
 private:
 	GameObjectManager();
 	~GameObjectManager();
