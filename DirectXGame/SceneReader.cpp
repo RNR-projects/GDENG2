@@ -7,6 +7,7 @@
 #include "Cube.h"
 #include "Plane.h"
 #include "Sphere.h"
+#include "Capsule.h"
 
 SceneReader* SceneReader::sharedInstance = nullptr;
 
@@ -87,6 +88,9 @@ void SceneReader::readFromFile()
 				break;
 			case AGameObject::PrimitiveType::SPHERE:
 				GameObjectManager::getInstance()->addGameObject(new Sphere(objectName, position, scale.x, 5));
+			case AGameObject::PrimitiveType::CAPSULE:
+				GameObjectManager::getInstance()->addGameObject(new Capsule(objectName, position, scale.x, 1));
+				break;
 			default:
 				break;
 			}
@@ -108,4 +112,5 @@ void SceneReader::init()
 
 void SceneReader::release()
 {
+	delete sharedInstance;
 }

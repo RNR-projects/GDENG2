@@ -9,6 +9,7 @@
 #include "Sphere.h"
 #include "SceneReader.h"
 #include "SceneWriter.h"
+#include "Capsule.h"
 
 MenuScreen::MenuScreen() : AUIScreen("Menu")
 {
@@ -64,6 +65,10 @@ void MenuScreen::drawUI()
 			if (ImGui::MenuItem("Sphere")) 
 			{
 				GameObjectManager::getInstance()->addGameObject(new Sphere("Sphere", Vector3D(), 1, 5)); 
+			}
+			if (ImGui::MenuItem("Capsule")) 
+			{
+				GameObjectManager::getInstance()->addGameObject(new Capsule("Capsule", Vector3D(), 1, 1)); 
 			}
 			if (ImGui::MenuItem("CubeBatch")) 
 			{

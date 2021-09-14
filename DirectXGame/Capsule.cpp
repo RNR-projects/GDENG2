@@ -1,4 +1,4 @@
-#include "Sphere.h"
+#include "Capsule.h"
 #include "GraphicsEngine.h"
 #include "VertexBuffer.h"
 #include "VertexShader.h"
@@ -9,23 +9,19 @@
 #include "BoundingSphere.h"
 #include "RenderSystem.h"
 #include "Texture.h"
-#include "PhysicsComponent.h"
 
 #define PI 3.14159265
 
-Sphere::Sphere(std::string name, Vector3D pos, float radius, int tessellationLevel) : AGameObject(name, AGameObject::PrimitiveType::SPHERE)
+Capsule::Capsule(std::string name, Vector3D pos, float radius, float cylinderHeight) : AGameObject(name, AGameObject::PrimitiveType::CAPSULE)
 {
 	this->localPosition = pos;
 	this->radius = radius;
-	this->localScale = Vector3D(radius, radius, radius);
-	this->tessellationLevel = tessellationLevel;
+	this->localScale = Vector3D(1,1,1);
+	this->cylinderHeight = cylinderHeight;
 
-	this->attachComponent(new PhysicsComponent("spherePhysics", this, true));
 	m_wood_tex = GraphicsEngine::getInstance()->getTextureManager()->createTextureFromFile(L"Assets\\Textures\\blank.jpg");
 
-	generateEdgesAtTessellation(tessellationLevel);
-
-	collisionSphere = new BoundingSphere(this->localPosition, radius);
+	generateEdges();
 
 	RenderSystem* graphEngine = GraphicsEngine::getInstance()->getRenderSystem();
 
@@ -39,7 +35,7 @@ Sphere::Sphere(std::string name, Vector3D pos, float radius, int tessellationLev
 
 	for (int i = 0; i < edges.size(); i++)
 	{
-		vertexList[i] = {worldLocations[i], texCoords[i]};
+		vertexList[i] = { worldLocations[i], texCoords[i] };
 	}
 
 	UINT size_list = edges.size();
@@ -59,21 +55,20 @@ Sphere::Sphere(std::string name, Vector3D pos, float radius, int tessellationLev
 	free(vertexList);
 }
 
-Sphere::~Sphere()
+Capsule::~Capsule()
 {
-	delete collisionSphere;
-
 	delete m_vb;
 	delete m_vs;
 	delete m_ps;
 	delete m_ib;
 }
 
-void Sphere::update(float deltaTime)
+void Capsule::update(float deltaTime)
 {
+
 }
 
-void Sphere::draw(ConstantBuffer* cb)
+void Capsule::draw(ConstantBuffer* cb)
 {
 	GraphicsEngine::getInstance()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_vs, cb);
 	GraphicsEngine::getInstance()->getRenderSystem()->getImmediateDeviceContext()->setConstantBuffer(m_ps, cb);
@@ -89,59 +84,45 @@ void Sphere::draw(ConstantBuffer* cb)
 	GraphicsEngine::getInstance()->getRenderSystem()->getImmediateDeviceContext()->drawIndexedTriangleList(m_ib->getSizeIndexList(), 0, 0);
 }
 
-void Sphere::setPosition(float x, float y, float z)
-{
-	AGameObject::setPosition(x, y, z);
-	collisionSphere->setPosition(Vector3D(x, y, z));
-}
-
-void Sphere::setPosition(Vector3D pos)
-{
-	AGameObject::setPosition(pos);
-	collisionSphere->setPosition(pos);
-}
-
-void Sphere::setRadius(float newRadius)
+void Capsule::setRadius(float newRadius)
 {
 	this->radius = newRadius;
-	this->localScale = Vector3D(radius, radius, radius);
-	collisionSphere->setRadius(newRadius);
 
 	updateVertexLocations();
 }
 
-void Sphere::setTessellationLevel(int newTessellationLevel)
+void Capsule::setCylinderHeight(float newHeight)
 {
-	this->tessellationLevel = newTessellationLevel;
+	this->cylinderHeight = newHeight;
 
 	updateVertexLocations();
 }
 
-float Sphere::getRadius()
+float Capsule::getRadius()
 {
-	return this->radius;
+    return radius;
 }
 
-std::vector<Vector3D> Sphere::getVertexWorldPositions()
+float Capsule::getCylinderHeight()
+{
+    return cylinderHeight;
+}
+
+std::vector<Vector3D> Capsule::getVertexWorldPositions()
 {
 	std::vector<Vector3D> out;
 	for (int i = 0; i < edges.size(); i++)
 	{
 		out.push_back(Quaternion::rotatePointEuler(edges[i], this->localRotation) + this->localPosition);
 	}
-    return out;
+	return out;
 }
 
-float Sphere::checkRaycast(Vector3D rayOrigin, Vector3D rayDirection)
-{
-    return collisionSphere->checkRaycast(rayOrigin, rayDirection);
-}
-
-void Sphere::updateVertexLocations()
+void Capsule::updateVertexLocations()
 {
 	RenderSystem* graphEngine = GraphicsEngine::getInstance()->getRenderSystem();
 
-	generateEdgesAtTessellation(tessellationLevel);
+	generateEdges();
 
 	std::vector<Vector3D> worldLocations = getVertexWorldPositions();
 
@@ -161,54 +142,54 @@ void Sphere::updateVertexLocations()
 	m_vb = graphEngine->createVertexBuffer(vertexList, sizeof(vertex), size_list, shader_byte_code, size_shader);
 }
 
-void Sphere::generateEdgesAtTessellation(int tessellation)
+void Capsule::generateEdges()
 {
 	edges.clear();
 	texCoords.clear();
-	int arcVertexCount = pow(2, tessellation - 1);
+	int arcVertexCount = 16;
 
-	edges.push_back(Vector3D(0, radius, 0));
+	edges.push_back(Vector3D(0, radius + cylinderHeight / 2.0f, 0));
 	texCoords.push_back(Vector2D(0.125f, 0));
-	edges.push_back(Vector3D(0, radius, 0));
+	edges.push_back(Vector3D(0, radius + cylinderHeight / 2.0f, 0));
 	texCoords.push_back(Vector2D(0.375f, 0));
-	edges.push_back(Vector3D(0, radius, 0));
+	edges.push_back(Vector3D(0, radius + cylinderHeight / 2.0f, 0));
 	texCoords.push_back(Vector2D(0.625f, 0));
-	edges.push_back(Vector3D(0, radius, 0));
+	edges.push_back(Vector3D(0, radius + cylinderHeight / 2.0f, 0));
 	texCoords.push_back(Vector2D(0.875f, 0));
 	float anglePerVVertex = PI / (2.0f * arcVertexCount);
-	for (int i = 1; i < arcVertexCount; i++)
+	for (int i = 1; i < arcVertexCount + 1; i++)
 	{
 		float anglePerHVertex = 2.0f / (float)(i * 4) * PI;
 		for (int j = 0; j < i * 4; j++)
 		{
-			edges.push_back(Vector3D(radius * sin(anglePerHVertex * j) * sin(anglePerVVertex * i), radius * cos(anglePerVVertex * i), radius * cos(anglePerHVertex * j) * sin(anglePerVVertex * i)));
-			texCoords.push_back(Vector2D(1.0f / (float)(i * 4) * j, 0.5f / (float)arcVertexCount * i));
+			edges.push_back(Vector3D(radius * sin(anglePerHVertex * j) * sin(anglePerVVertex * i), radius * cos(anglePerVVertex * i) + cylinderHeight / 2.0f, radius * cos(anglePerHVertex * j) * sin(anglePerVVertex * i)));
+			texCoords.push_back(Vector2D(1.0f / (float)(i * 4) * j, 0.4f / (float)arcVertexCount * i));
 		}
-		edges.push_back(Vector3D(radius * sin(0) * sin(anglePerVVertex * i), radius * cos(anglePerVVertex * i), radius * cos(0) * sin(anglePerVVertex * i)));
-		texCoords.push_back(Vector2D(1.0f, 0.5f / (float)arcVertexCount * i));
+		edges.push_back(Vector3D(radius * sin(0) * sin(anglePerVVertex * i), radius * cos(anglePerVVertex * i) + cylinderHeight / 2.0f, radius * cos(0) * sin(anglePerVVertex * i)));
+		texCoords.push_back(Vector2D(1.0f, 0.4f / (float)arcVertexCount * i));
 	}
 	for (int i = 0; i < arcVertexCount; i++)
 	{
 		float anglePerHVertex = 2.0f / (float)((arcVertexCount - i) * 4) * PI;
 		for (int j = 0; j < (arcVertexCount - i) * 4; j++)
 		{
-			edges.push_back(Vector3D(radius * sin(anglePerHVertex * j) * sin(PI / 2.0f + anglePerVVertex * i), radius * cos(PI / 2.0f + anglePerVVertex * i), radius * cos(anglePerHVertex * j) * sin(PI / 2.0f + anglePerVVertex * i)));
-			texCoords.push_back(Vector2D(1.0f / (float)((arcVertexCount - i) * 4) * j, 0.5f / (float)arcVertexCount * i + 0.5f));
+			edges.push_back(Vector3D(radius * sin(anglePerHVertex * j) * sin(PI / 2.0f + anglePerVVertex * i), radius * cos(PI / 2.0f + anglePerVVertex * i) - cylinderHeight / 2.0f, radius * cos(anglePerHVertex * j) * sin(PI / 2.0f + anglePerVVertex * i)));
+			texCoords.push_back(Vector2D(1.0f / (float)((arcVertexCount - i) * 4) * j, 0.4f / (float)arcVertexCount * i + 0.6f));
 		}
-		edges.push_back(Vector3D(radius * sin(0) * sin(PI / 2.0f + anglePerVVertex * i), radius * cos(PI / 2.0f + anglePerVVertex * i), radius * cos(0) * sin(PI / 2.0f + anglePerVVertex * i)));
-		texCoords.push_back(Vector2D(1.0f, 0.5f / (float)arcVertexCount * i + 0.5f));
+		edges.push_back(Vector3D(radius * sin(0) * sin(PI / 2.0f + anglePerVVertex * i), radius * cos(PI / 2.0f + anglePerVVertex * i) - cylinderHeight / 2.0f, radius * cos(0) * sin(PI / 2.0f + anglePerVVertex * i)));
+		texCoords.push_back(Vector2D(1.0f, 0.4f / (float)arcVertexCount * i + 0.6f));
 	}
-	edges.push_back(Vector3D(0, -radius, 0));
+	edges.push_back(Vector3D(0, -(radius + cylinderHeight / 2.0f), 0));
 	texCoords.push_back(Vector2D(0.125f, 1));
-	edges.push_back(Vector3D(0, -radius, 0));
+	edges.push_back(Vector3D(0, -(radius + cylinderHeight / 2.0f), 0));
 	texCoords.push_back(Vector2D(0.375f, 1));
-	edges.push_back(Vector3D(0, -radius, 0));
+	edges.push_back(Vector3D(0, -(radius + cylinderHeight / 2.0f), 0));
 	texCoords.push_back(Vector2D(0.625f, 1));
-	edges.push_back(Vector3D(0, -radius, 0));
+	edges.push_back(Vector3D(0, -(radius + cylinderHeight / 2.0f), 0));
 	texCoords.push_back(Vector2D(0.875f, 1));
 
-	UINT size_index_list = arcVertexCount * arcVertexCount * 24;
-	unsigned int* index_list = (unsigned int*) malloc(sizeof(unsigned int) * size_index_list);
+	UINT size_index_list = arcVertexCount * arcVertexCount * 24 + arcVertexCount * 24;
+	unsigned int* index_list = (unsigned int*)malloc(sizeof(unsigned int) * size_index_list);
 
 	int currentIndex = 0;
 	int layerIndex = 0;
@@ -249,6 +230,19 @@ void Sphere::generateEdgesAtTessellation(int tessellation)
 		}
 		layerIndex += i * 4 + 1;
 	}
+	for (int i = 0; i < arcVertexCount * 4; i++)
+	{
+		index_list[currentIndex] = (unsigned int)(layerIndex + i);
+		index_list[currentIndex + 1] = (unsigned int)(layerIndex + arcVertexCount * 4 + 1 + i);
+		index_list[currentIndex + 2] = (unsigned int)(layerIndex + arcVertexCount * 4 + 2 + i);
+		currentIndex += 3;
+		
+		index_list[currentIndex] = (unsigned int)(layerIndex + i);
+		index_list[currentIndex + 2] = (unsigned int)(layerIndex + 1 + i);
+		index_list[currentIndex + 1] = (unsigned int)(layerIndex + arcVertexCount * 4 + 2 + i);
+		currentIndex += 3;
+	}
+	layerIndex += arcVertexCount * 4 + 1;
 	for (int i = 0; i < arcVertexCount - 1; i++)
 	{
 		int x = 1;
@@ -285,7 +279,7 @@ void Sphere::generateEdgesAtTessellation(int tessellation)
 		index_list[currentIndex] = (unsigned int)(layerIndex + i + 1);
 		currentIndex += 3;
 	}
-	
+
 	m_ib = GraphicsEngine::getInstance()->getRenderSystem()->createIndexBuffer(index_list, size_index_list);
 
 	free(index_list);

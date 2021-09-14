@@ -74,4 +74,5 @@ void SceneWriter::init()
 
 void SceneWriter::release()
 {
+    delete sharedInstance;
 }
