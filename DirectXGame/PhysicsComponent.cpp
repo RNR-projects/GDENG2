@@ -3,8 +3,9 @@
 #include "PhysicsSystem.h"
 #include "AGameObject.h"
 #include "Sphere.h"
+#include "Capsule.h"
 
-PhysicsComponent::PhysicsComponent(std::string name, AGameObject* owner, bool isSphere) : AComponent(name, AComponent::ComponentType::Physics, owner)
+PhysicsComponent::PhysicsComponent(std::string name, AGameObject* owner) : AComponent(name, AComponent::ComponentType::Physics, owner)
 {
     BaseComponentSystem::getInstance()->getPhysicsSystem()->registerComponent(this);
     reactphysics3d::PhysicsCommon* physicsCommon = BaseComponentSystem::getInstance()->getPhysicsSystem()->getPhysicsCommon();
@@ -16,30 +17,59 @@ PhysicsComponent::PhysicsComponent(std::string name, AGameObject* owner, bool is
     transform.setOrientation(quat);
     Vector3D pos = this->getOwner()->getLocalPosition();
     transform.setPosition(reactphysics3d::Vector3(pos.x, pos.y, pos.z));
-    Vector3D scale = this->getOwner()->getLocalScale();
-    if (!isSphere)
-    {
-        reactphysics3d::BoxShape* boxShape = physicsCommon->createBoxShape(reactphysics3d::Vector3(scale.x / 2, scale.y / 2, scale.z / 2));
-        this->rigidBody = physicsWorld->createRigidBody(transform);
-        transform.setToIdentity();
-        this->rigidBody->addCollider(boxShape, transform);
-    }
-    else
-    {
-        reactphysics3d::SphereShape* sphereShape = physicsCommon->createSphereShape(((Sphere*)this->getOwner())->getRadius());
-        this->rigidBody = physicsWorld->createRigidBody(transform);
-        transform.setToIdentity();
-        this->rigidBody->addCollider(sphereShape, transform);
-    }
-    this->rigidBody->updateMassPropertiesFromColliders();
-    this->rigidBody->setMass(this->mass);
-    this->rigidBody->setType(reactphysics3d::BodyType::DYNAMIC);
+    this->rigidBody = physicsWorld->createRigidBody(transform);
 }
 
 PhysicsComponent::~PhysicsComponent()
 {
     reactphysics3d::PhysicsWorld* physicsWorld = BaseComponentSystem::getInstance()->getPhysicsSystem()->getPhysicsWorld();
     physicsWorld->destroyRigidBody(this->rigidBody);
+    BaseComponentSystem::getInstance()->getPhysicsSystem()->unregisterComponent(this);
+    AComponent::~AComponent();
+}
+
+void PhysicsComponent::addSphereCollider()
+{
+    reactphysics3d::PhysicsCommon* physicsCommon = BaseComponentSystem::getInstance()->getPhysicsSystem()->getPhysicsCommon();
+    reactphysics3d::PhysicsWorld* physicsWorld = BaseComponentSystem::getInstance()->getPhysicsSystem()->getPhysicsWorld();
+    reactphysics3d::Transform transform;
+
+    reactphysics3d::SphereShape* shape = physicsCommon->createSphereShape(((Sphere*)this->getOwner())->getRadius() * this->getOwner()->getLocalScale().x);
+    transform.setToIdentity();
+    this->rigidBody->addCollider(shape, transform);
+    this->rigidBody->updateMassPropertiesFromColliders();
+    this->rigidBody->setMass(this->mass);
+    this->rigidBody->setType(reactphysics3d::BodyType::DYNAMIC);
+}
+
+void PhysicsComponent::addBoxCollider()
+{
+    reactphysics3d::PhysicsCommon* physicsCommon = BaseComponentSystem::getInstance()->getPhysicsSystem()->getPhysicsCommon();
+    reactphysics3d::PhysicsWorld* physicsWorld = BaseComponentSystem::getInstance()->getPhysicsSystem()->getPhysicsWorld();
+    Vector3D scale = this->getOwner()->getLocalScale();
+    reactphysics3d::Transform transform;
+
+    reactphysics3d::BoxShape* boxShape = physicsCommon->createBoxShape(reactphysics3d::Vector3(scale.x / 2.0f, scale.y / 2.0f, scale.z / 2.0f));
+    transform.setToIdentity();
+    this->rigidBody->addCollider(boxShape, transform);
+    this->rigidBody->updateMassPropertiesFromColliders();
+    this->rigidBody->setMass(this->mass);
+    this->rigidBody->setType(reactphysics3d::BodyType::DYNAMIC);
+}
+
+void PhysicsComponent::addCapsuleCollider()
+{
+    reactphysics3d::PhysicsCommon* physicsCommon = BaseComponentSystem::getInstance()->getPhysicsSystem()->getPhysicsCommon();
+    reactphysics3d::PhysicsWorld* physicsWorld = BaseComponentSystem::getInstance()->getPhysicsSystem()->getPhysicsWorld();
+    reactphysics3d::Transform transform;
+
+    reactphysics3d::CapsuleShape* shape = physicsCommon->createCapsuleShape(((Capsule*)this->getOwner())->getRadius() * this->getOwner()->getLocalScale().x, 
+        ((Capsule*)this->getOwner())->getCylinderHeight() * this->getOwner()->getLocalScale().y);
+    transform.setToIdentity();
+    this->rigidBody->addCollider(shape, transform);
+    this->rigidBody->updateMassPropertiesFromColliders();
+    this->rigidBody->setMass(this->mass);
+    this->rigidBody->setType(reactphysics3d::BodyType::DYNAMIC);
 }
 
 void PhysicsComponent::perform(float deltaTime)
@@ -60,4 +90,17 @@ void PhysicsComponent::perform(float deltaTime)
 reactphysics3d::RigidBody* PhysicsComponent::getRigidBody()
 {
     return this->rigidBody;
+}
+
+void PhysicsComponent::resetTransform()
+{
+    reactphysics3d::Transform transform;
+    Vector3D rot = this->getOwner()->getLocalRotation();
+    reactphysics3d::Quaternion quat = reactphysics3d::Quaternion::fromEulerAngles(rot.x, rot.y, rot.z);
+    transform.setOrientation(quat);
+    Vector3D pos = this->getOwner()->getLocalPosition();
+    transform.setPosition(reactphysics3d::Vector3(pos.x, pos.y, pos.z));
+    this->rigidBody->setTransform(transform);
+    this->rigidBody->setLinearVelocity({ 0,0,0 });
+    this->rigidBody->setAngularVelocity({ 0,0,0 });
 }

@@ -17,8 +17,8 @@ void EngineBackend::initialize()
 
 void EngineBackend::destroy()
 {
-    sharedInstance->release();
-    delete sharedInstance;
+    if (sharedInstance != nullptr)
+        sharedInstance->release();
 }
 
 EngineBackend::EditorMode EngineBackend::getMode()
@@ -72,4 +72,5 @@ void EngineBackend::init()
 
 void EngineBackend::release()
 {
+    delete sharedInstance;
 }

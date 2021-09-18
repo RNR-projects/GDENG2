@@ -57,6 +57,8 @@ Capsule::Capsule(std::string name, Vector3D pos, float radius, float cylinderHei
 
 Capsule::~Capsule()
 {
+	delete m_wood_tex;
+
 	delete m_vb;
 	delete m_vs;
 	delete m_ps;
@@ -113,7 +115,7 @@ std::vector<Vector3D> Capsule::getVertexWorldPositions()
 	std::vector<Vector3D> out;
 	for (int i = 0; i < edges.size(); i++)
 	{
-		out.push_back(Quaternion::rotatePointEuler(edges[i], this->localRotation) + this->localPosition);
+		out.push_back(Quaternion::rotatePointEuler(Vector3D(edges[i].x * localScale.x, edges[i].y * localScale.y, edges[i].z * localScale.z), this->localRotation) + this->localPosition);
 	}
 	return out;
 }

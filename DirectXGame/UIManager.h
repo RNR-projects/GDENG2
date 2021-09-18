@@ -42,9 +42,5 @@ private:
 
 	std::vector<AUIScreen*> uiList;
 	std::unordered_map<std::string, AUIScreen*> uiTable;
-
-	int my_image_width = 0;
-	int my_image_height = 0;
-	ID3D11ShaderResourceView* my_texture = nullptr;
 };
 

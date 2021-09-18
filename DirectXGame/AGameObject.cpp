@@ -1,5 +1,6 @@
 #include "AGameObject.h"
 #include "EditorAction.h"
+#include "PhysicsComponent.h"
 
 AGameObject::AGameObject(std::string name, AGameObject::PrimitiveType type)
 {
@@ -90,6 +91,15 @@ void AGameObject::detachComponent(AComponent* component)
     this->componentList.erase(std::remove(componentList.begin(), componentList.end(), component), componentList.end());
 }
 
+void AGameObject::deleteAllComponents()
+{
+    for (int i = 0; i < this->componentList.size(); i++)
+    {
+        delete this->componentList[i];
+    }
+    this->componentList.clear();
+}
+
 AComponent* AGameObject::findComponentByName(std::string name)
 {
     for (int i = 0; i < this->componentList.size(); i++)
@@ -123,18 +133,27 @@ std::vector<AComponent*> AGameObject::getComponentsOfType(AComponent::ComponentT
 
 void AGameObject::saveEditState()
 {
-    if (this->lastEditState == nullptr) {
+    if (this->lastEditState == nullptr) 
+    {
         this->lastEditState = new EditorAction(this);
     }
 }
 
 void AGameObject::restoreEditState()
 {
-    if (this->lastEditState != nullptr) {
-        this->localPosition = this->lastEditState->getStorePos();
-        this->localScale = this->lastEditState->getStoredScale();
-        this->localRotation = this->lastEditState->getStoredOrientation();
+    if (this->lastEditState != nullptr)
+    {
+        this->setPosition(this->lastEditState->getStorePos());
+        this->setScale(this->lastEditState->getStoredScale());
+        this->setRotation(this->lastEditState->getStoredOrientation());
 
+        PhysicsComponent* physics = (PhysicsComponent*)this->findComponentByName("physicsComp");
+        if (physics != nullptr)
+        {
+            physics->resetTransform();
+        }
+
+        delete this->lastEditState;
         this->lastEditState = nullptr;
     }
 }

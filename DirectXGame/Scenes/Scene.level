@@ -1,0 +1,30 @@
+Cube (1)
+Type: 1
+Position: -2.42 1.110133 -0.03522635
+Rotation: 0 0 0
+Scale: 1 1 1
+HasRigidBody: 1
+Cube
+Type: 1
+Position: 2.78 1.65 -0.73
+Rotation: 0 0 0
+Scale: 1 1 1
+HasRigidBody: 1
+Plane
+Type: 2
+Position: 0.6903086 0.1301336 -0.73
+Rotation: 0 0 0
+Scale: 10 10 10
+HasRigidBody: 1
+Sphere (1)
+Type: 3
+Position: 1.33 3.470133 -0.73
+Rotation: 0 0 0
+Scale: 1 1 1
+HasRigidBody: 1
+Sphere
+Type: 3
+Position: 0.6903086 1.65 -0.73
+Rotation: 0 0 0
+Scale: 1 1 1
+HasRigidBody: 1

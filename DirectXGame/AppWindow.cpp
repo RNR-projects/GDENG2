@@ -2,8 +2,6 @@
 #include <Windows.h>
 #include "GameObjectConstants.h"
 #include "InputSystem.h"
-#include <iostream>
-#include <random>
 #include "UIManager.h"
 #include "GameObjectManager.h"
 #include "PhysicsSystem.h"
@@ -228,6 +226,10 @@ void AppWindow::onDestroy()
 
 	delete m_swap_chain;
 	GraphicsEngine::getInstance()->destroy();
+	GameObjectManager::getInstance()->destroy();
+	EngineBackend::getInstance()->destroy();
+	BaseComponentSystem::getInstance()->destroy();
+	UIManager::getInstance()->destroy();
 
 	ImGui_ImplDX11_Shutdown();
 	ImGui_ImplWin32_Shutdown();

@@ -23,10 +23,6 @@ Plane::Plane(std::string name, Vector3D pos, Vector3D scale, Vector3D color, Vec
 	edges[3] = Vector3D(this->localScale.x / 2.0f, 0.05f, this->localScale.z / 2.0f);
 
 	RenderSystem* graphEngine = GraphicsEngine::getInstance()->getRenderSystem();
-
-	PhysicsComponent* comp = new PhysicsComponent("planePhysics", this);
-	this->attachComponent(comp);
-	comp->getRigidBody()->setType(reactphysics3d::BodyType::STATIC);
 	
 	tex = GraphicsEngine::getInstance()->getTextureManager()->createTextureFromFile(L"Assets\\Textures\\blank.jpg");
 
@@ -66,6 +62,8 @@ Plane::Plane(std::string name, Vector3D pos, Vector3D scale, Vector3D color, Vec
 
 Plane::~Plane()
 {
+	delete tex;
+
 	delete m_vb;
 	delete m_vs;
 	delete m_ps;

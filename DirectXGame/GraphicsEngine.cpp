@@ -33,6 +33,7 @@ bool GraphicsEngine::release()
 	delete m_render_system;
 	delete m_tex_manager;
 	delete m_mesh_manager;
+	delete sharedInstance;
 	return true;
 }
 

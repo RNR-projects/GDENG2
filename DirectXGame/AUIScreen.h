@@ -7,7 +7,7 @@ class AUIScreen
 {
 protected:
 	AUIScreen(std::string name);
-	~AUIScreen();
+	virtual ~AUIScreen();
 
 	std::string getName();
 	virtual void drawUI() = 0;

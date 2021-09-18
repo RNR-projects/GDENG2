@@ -10,6 +10,7 @@
 #include "SceneReader.h"
 #include "SceneWriter.h"
 #include "Capsule.h"
+#include "PhysicsComponent.h"
 
 MenuScreen::MenuScreen() : AUIScreen("Menu")
 {
@@ -27,6 +28,8 @@ MenuScreen::MenuScreen() : AUIScreen("Menu")
 
 MenuScreen::~MenuScreen()
 {
+	SceneWriter::getInstance()->destroy();
+	SceneReader::getInstance()->destroy();
 	delete this->openSceneDialog;
 	delete this->saveSceneDialog;
 }
@@ -64,28 +67,44 @@ void MenuScreen::drawUI()
 			}
 			if (ImGui::MenuItem("Sphere")) 
 			{
-				GameObjectManager::getInstance()->addGameObject(new Sphere("Sphere", Vector3D(), 1, 5)); 
+				GameObjectManager::getInstance()->addGameObject(new Sphere("Sphere", Vector3D(), 0.5f, 5)); 
 			}
 			if (ImGui::MenuItem("Capsule")) 
 			{
-				GameObjectManager::getInstance()->addGameObject(new Capsule("Capsule", Vector3D(), 1, 1)); 
+				GameObjectManager::getInstance()->addGameObject(new Capsule("Capsule", Vector3D(), 0.5f, 1)); 
 			}
-			if (ImGui::MenuItem("CubeBatch")) 
-			{
-				for (int i = 0; i < 20; i++)
-					GameObjectManager::getInstance()->addGameObject(new Cube("Cube", Vector3D(0,5,0), Vector3D(1, 1, 1), Vector3D(), Vector3D()));
+			if (ImGui::MenuItem("CubePhysics")) 
+			{ 
+				AGameObject* newObject = new Cube("Cube", Vector3D(), Vector3D(1, 1, 1), Vector3D(), Vector3D());
+				PhysicsComponent* physics = new PhysicsComponent("physicsComp", newObject);
+				physics->addBoxCollider();
+				newObject->attachComponent(physics);
+				GameObjectManager::getInstance()->addGameObject(newObject); 
 			}
-			if (ImGui::MenuItem("Teapot")) 
+			if (ImGui::MenuItem("PlanePhysics")) 
 			{
-				GameObjectManager::getInstance()->addGameObject(new LoadedMeshObject("Teapot", Vector3D(), Vector3D(1, 1, 1), Vector3D(), L"Assets\\Meshes\\teapot.obj"));
+				AGameObject* newObject = new Plane("Plane", Vector3D(0, -2, 0), Vector3D(15, 1, 15), Vector3D(), Vector3D());
+				PhysicsComponent* physics = new PhysicsComponent("physicsComp", newObject);
+				physics->addBoxCollider();
+				physics->getRigidBody()->setType(reactphysics3d::BodyType::STATIC);
+				newObject->attachComponent(physics);
+				GameObjectManager::getInstance()->addGameObject(newObject);
 			}
-			if (ImGui::MenuItem("Armadillo")) 
+			if (ImGui::MenuItem("SpherePhysics")) 
 			{
-				GameObjectManager::getInstance()->addGameObject(new LoadedMeshObject("Armadillo", Vector3D(), Vector3D(1, 1, 1), Vector3D(), L"Assets\\Meshes\\armadillo.obj"));
+				AGameObject* newObject = new Sphere("Sphere", Vector3D(), 0.5f, 5);
+				PhysicsComponent* physics = new PhysicsComponent("physicsComp", newObject);
+				physics->addSphereCollider();
+				newObject->attachComponent(physics);
+				GameObjectManager::getInstance()->addGameObject(newObject);
 			}
-			if (ImGui::MenuItem("Bunny"))
+			if (ImGui::MenuItem("CapsulePhysics")) 
 			{
-				GameObjectManager::getInstance()->addGameObject(new LoadedMeshObject("Bunny", Vector3D(), Vector3D(1, 1, 1), Vector3D(), L"Assets\\Meshes\\bunny.obj"));
+				AGameObject* newObject = new Capsule("Capsule", Vector3D(), 0.5f, 1);
+				PhysicsComponent* physics = new PhysicsComponent("physicsComp", newObject);
+				physics->addCapsuleCollider();
+				newObject->attachComponent(physics);
+				GameObjectManager::getInstance()->addGameObject(newObject);
 			}
 			ImGui::EndMenu();
 		}

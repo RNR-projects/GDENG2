@@ -8,6 +8,7 @@
 #include "Plane.h"
 #include "Sphere.h"
 #include "Capsule.h"
+#include "PhysicsComponent.h"
 
 SceneReader* SceneReader::sharedInstance = nullptr;
 
@@ -53,6 +54,8 @@ void SceneReader::readFromFile()
 	Vector3D position;
 	Vector3D rotation;
 	Vector3D scale;
+	int hasRigidBody;
+	AGameObject* spawn;
 	while (std::getline(sceneFile, readLine)) {
 		if (index == 0) {
 			objectName = readLine;
@@ -76,20 +79,60 @@ void SceneReader::readFromFile()
 		else if (index == 4) {
 			std::vector<std::string> stringSplit = StringUtils::split(readLine, ' ');
 			scale = Vector3D(std::stof(stringSplit[1]), std::stof(stringSplit[2]), std::stof(stringSplit[3]));
+			index++;
+		}
+		else if (index == 5)
+		{
+			std::vector<std::string> stringSplit = StringUtils::split(readLine, ' ');
+			hasRigidBody = std::stoi(stringSplit[1]);
 			index = 0;
 
 			switch (objectType)
 			{
 			case AGameObject::PrimitiveType::CUBE:
-				GameObjectManager::getInstance()->addGameObject(new Cube(objectName, position, scale, Vector3D(), rotation));
+				spawn = new Cube(objectName, position, scale, Vector3D(), rotation);
+				if (hasRigidBody == 1)
+				{
+					PhysicsComponent* physics = new PhysicsComponent("physicsComp", spawn);
+					physics->addBoxCollider();
+					spawn->attachComponent(physics);
+				}
+				GameObjectManager::getInstance()->addGameObject(spawn);
 				break;
 			case AGameObject::PrimitiveType::PLANE:
-				GameObjectManager::getInstance()->addGameObject(new Plane(objectName, position, scale, Vector3D(), rotation));
+				spawn = new Plane(objectName, position, scale, Vector3D(), rotation);
+				if (hasRigidBody == 1)
+				{
+					PhysicsComponent* physics = new PhysicsComponent("physicsComp", spawn);
+					physics->addBoxCollider();
+					physics->getRigidBody()->setType(reactphysics3d::BodyType::STATIC);
+					spawn->attachComponent(physics);
+				}
+				GameObjectManager::getInstance()->addGameObject(spawn);
 				break;
 			case AGameObject::PrimitiveType::SPHERE:
-				GameObjectManager::getInstance()->addGameObject(new Sphere(objectName, position, scale.x, 5));
+				spawn = new Sphere(objectName, position, 0.5f, 5);
+				spawn->setRotation(rotation);
+				spawn->setScale(scale);
+				if (hasRigidBody == 1)
+				{
+					PhysicsComponent* physics = new PhysicsComponent("physicsComp", spawn);
+					physics->addSphereCollider();
+					spawn->attachComponent(physics);
+				}
+				GameObjectManager::getInstance()->addGameObject(spawn);
+				break;
 			case AGameObject::PrimitiveType::CAPSULE:
-				GameObjectManager::getInstance()->addGameObject(new Capsule(objectName, position, scale.x, 1));
+				spawn = new Capsule(objectName, position, 0.5f, 1.0f);
+				spawn->setRotation(rotation);
+				spawn->setScale(scale);
+				if (hasRigidBody == 1)
+				{
+					PhysicsComponent* physics = new PhysicsComponent("physicsComp", spawn);
+					physics->addCapsuleCollider();
+					spawn->attachComponent(physics);
+				}
+				GameObjectManager::getInstance()->addGameObject(spawn);
 				break;
 			default:
 				break;

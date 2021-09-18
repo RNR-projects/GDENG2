@@ -16,6 +16,8 @@ public:
 	void updateAllGameObjects(float deltaTime);
 	void drawAllGameObjects(ConstantBuffer* cb);
 
+	void deleteAllGameObjects();
+
 	std::vector<std::string> getGameObjectNames();
 	std::vector<AGameObject*> getAllObjects();
 
@@ -27,6 +29,8 @@ public:
 	AGameObject* findObjectByName(std::string name);
 
 	void applyEditorAction(class EditorAction* action, bool isUndo);
+	void saveGameobjectStates();
+	void resetGameobjectStates();
 
 private:
 	GameObjectManager();

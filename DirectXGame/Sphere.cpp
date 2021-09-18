@@ -17,15 +17,11 @@ Sphere::Sphere(std::string name, Vector3D pos, float radius, int tessellationLev
 {
 	this->localPosition = pos;
 	this->radius = radius;
-	this->localScale = Vector3D(radius, radius, radius);
 	this->tessellationLevel = tessellationLevel;
 
-	this->attachComponent(new PhysicsComponent("spherePhysics", this, true));
 	m_wood_tex = GraphicsEngine::getInstance()->getTextureManager()->createTextureFromFile(L"Assets\\Textures\\blank.jpg");
 
 	generateEdgesAtTessellation(tessellationLevel);
-
-	collisionSphere = new BoundingSphere(this->localPosition, radius);
 
 	RenderSystem* graphEngine = GraphicsEngine::getInstance()->getRenderSystem();
 
@@ -61,7 +57,7 @@ Sphere::Sphere(std::string name, Vector3D pos, float radius, int tessellationLev
 
 Sphere::~Sphere()
 {
-	delete collisionSphere;
+	delete m_wood_tex;
 
 	delete m_vb;
 	delete m_vs;
@@ -89,23 +85,9 @@ void Sphere::draw(ConstantBuffer* cb)
 	GraphicsEngine::getInstance()->getRenderSystem()->getImmediateDeviceContext()->drawIndexedTriangleList(m_ib->getSizeIndexList(), 0, 0);
 }
 
-void Sphere::setPosition(float x, float y, float z)
-{
-	AGameObject::setPosition(x, y, z);
-	collisionSphere->setPosition(Vector3D(x, y, z));
-}
-
-void Sphere::setPosition(Vector3D pos)
-{
-	AGameObject::setPosition(pos);
-	collisionSphere->setPosition(pos);
-}
-
 void Sphere::setRadius(float newRadius)
 {
 	this->radius = newRadius;
-	this->localScale = Vector3D(radius, radius, radius);
-	collisionSphere->setRadius(newRadius);
 
 	updateVertexLocations();
 }
@@ -127,14 +109,9 @@ std::vector<Vector3D> Sphere::getVertexWorldPositions()
 	std::vector<Vector3D> out;
 	for (int i = 0; i < edges.size(); i++)
 	{
-		out.push_back(Quaternion::rotatePointEuler(edges[i], this->localRotation) + this->localPosition);
+		out.push_back(Quaternion::rotatePointEuler(Vector3D(edges[i].x * localScale.x, edges[i].y * localScale.y, edges[i].z * localScale.z), this->localRotation) + this->localPosition);
 	}
     return out;
-}
-
-float Sphere::checkRaycast(Vector3D rayOrigin, Vector3D rayDirection)
-{
-    return collisionSphere->checkRaycast(rayOrigin, rayDirection);
 }
 
 void Sphere::updateVertexLocations()

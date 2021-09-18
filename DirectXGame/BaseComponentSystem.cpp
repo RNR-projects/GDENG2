@@ -18,6 +18,11 @@ void BaseComponentSystem::initialize()
 
 void BaseComponentSystem::destroy()
 {
+    if (sharedInstance != nullptr)
+    {
+        delete sharedInstance->physicsSystem;
+        delete sharedInstance;
+    }
 }
 
 PhysicsSystem* BaseComponentSystem::getPhysicsSystem()

@@ -5,14 +5,20 @@
 class PhysicsComponent : public AComponent
 {
 public:
-	PhysicsComponent(std::string name, AGameObject* owner, bool isSphere = false);
+	PhysicsComponent(std::string name, AGameObject* owner);
 	~PhysicsComponent();
+
+	void addSphereCollider();
+	void addBoxCollider();
+	void addCapsuleCollider();
 
 	void perform(float deltaTime) override;
 	reactphysics3d::RigidBody* getRigidBody();
 
+	void resetTransform();
+
 private:
-	float mass = 1000.0f;
+	float mass = 1.0f;
 	reactphysics3d::RigidBody* rigidBody;
 };
 

@@ -9,17 +9,12 @@ public:
 	virtual void update(float deltaTime) override;
 	virtual void draw(ConstantBuffer* cb) override;
 
-	virtual void setPosition(float x, float y, float z) override;
-	virtual void setPosition(Vector3D pos) override;
-
 	void setRadius(float newRadius);
 	void setTessellationLevel(int newTessellationLevel);
 
 	float getRadius();
 
 	std::vector<Vector3D> getVertexWorldPositions();
-
-	float checkRaycast(Vector3D rayOrigin, Vector3D rayDirection);
 
 private:
 	virtual void updateVertexLocations() override;
@@ -35,8 +30,6 @@ private:
 	class VertexShader* m_vs;
 	class PixelShader* m_ps;
 	class IndexBuffer* m_ib;
-
-	class BoundingSphere* collisionSphere;
 
 	class Texture* m_wood_tex;
 };

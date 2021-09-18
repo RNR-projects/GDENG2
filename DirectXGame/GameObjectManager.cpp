@@ -61,6 +61,18 @@ void GameObjectManager::drawAllGameObjects(ConstantBuffer* cb)
     }
 }
 
+void GameObjectManager::deleteAllGameObjects()
+{
+    selectedObject = nullptr;
+    for (int i = 0; i < gameObjectList.size(); i++)
+    {
+        gameObjectList[i]->deleteAllComponents();
+        delete gameObjectList[i];
+    }
+    gameObjectList.clear();
+    gameObjectNames.clear();
+}
+
 std::vector<std::string> GameObjectManager::getGameObjectNames()
 {
     return gameObjectNames;
@@ -111,6 +123,22 @@ void GameObjectManager::applyEditorAction(EditorAction* action, bool isUndo)
     }
 }
 
+void GameObjectManager::saveGameobjectStates()
+{
+    for (int i = 0; i < gameObjectList.size(); i++)
+    {
+       gameObjectList[i]->saveEditState();
+    }
+}
+
+void GameObjectManager::resetGameobjectStates()
+{
+    for (int i = 0; i < gameObjectList.size(); i++)
+    {
+        gameObjectList[i]->restoreEditState();
+    }
+}
+
 GameObjectManager::GameObjectManager()
 {
 }
@@ -125,9 +153,12 @@ void GameObjectManager::init()
 
 void GameObjectManager::release()
 {
+    selectedObject = nullptr;
     for (int i = 0; i < gameObjectList.size(); i++)
     {
+        gameObjectList[i]->deleteAllComponents();
         delete gameObjectList[i];
     }
     gameObjectList.clear();
+    gameObjectNames.clear();
 }

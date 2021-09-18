@@ -3,6 +3,8 @@
 #include <iostream>
 #include "GameObjectManager.h"
 #include "AGameObject.h"
+#include "Sphere.h"
+#include "Capsule.h"
 
 SceneWriter* SceneWriter::sharedInstance = nullptr;
 
@@ -56,6 +58,15 @@ void SceneWriter::writeToFile()
         sceneFile << "Position: " << pos.x << " " << pos.y << " " << pos.z << std::endl;
         sceneFile << "Rotation: " << rot.x << " " << rot.y << " " << rot.z << std::endl;
         sceneFile << "Scale: " << scale.x << " " << scale.y << " " << scale.z << std::endl;
+
+        if (allObjects[i]->findComponentByName("physicsComp") != nullptr)
+        {
+            sceneFile << "HasRigidBody: " << 1 << std::endl;
+        }
+        else
+        {
+            sceneFile << "HasRigidBody: " << 0 << std::endl;
+        }
     }
     sceneFile.close();
 }

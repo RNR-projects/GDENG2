@@ -15,13 +15,12 @@ public:
 		CUBE,
 		PLANE,
 		SPHERE,
-		CAPSULE,
-		CYLINDER
+		CAPSULE
 	};
 
 
 	AGameObject(std::string name, PrimitiveType type);
-	~AGameObject();
+	virtual ~AGameObject();
 
 	virtual void update(float deltaTime) = 0;
 	virtual void draw(class ConstantBuffer* cb) = 0;
@@ -45,6 +44,8 @@ public:
 
 	void attachComponent(AComponent* component);
 	void detachComponent(AComponent* component);
+
+	void deleteAllComponents();
 
 	AComponent* findComponentByName(std::string name);
 	AComponent* findComponentOfType(AComponent::ComponentType type, std::string name);

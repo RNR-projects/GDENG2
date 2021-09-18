@@ -1,0 +1,54 @@
+Plane
+Type: 2
+Position: 0 -2 0
+Rotation: 0 0 0
+Scale: 15 0.1 15
+HasRigidBody: 1
+Cube
+Type: 1
+Position: 2 0 0
+Rotation: 0 0 0
+Scale: 1 1 1
+HasRigidBody: 1
+Cube (1)
+Type: 1
+Position: -3 0 0
+Rotation: 0 0 0
+Scale: 1 1 1
+HasRigidBody: 1
+Cube (2)
+Type: 1
+Position: 0 0 1
+Rotation: 0 0 0
+Scale: 1 1 1
+HasRigidBody: 1
+Sphere
+Type: 3
+Position: 0 0 -2
+Rotation: 0 0 0
+Scale: 1 1 1
+HasRigidBody: 0
+Capsule
+Type: 4
+Position: 0 2 0
+Rotation: 0 0 0
+Scale: 1 1 1
+HasRigidBody: 1
+Capsule (1)
+Type: 4
+Position: 0 0 0
+Rotation: 0 0 0
+Scale: 1 1 1
+HasRigidBody: 0
+Plane (1)
+Type: 2
+Position: 0 -10 0
+Rotation: 0 0 0
+Scale: 15 0.1 15
+HasRigidBody: 0
+Sphere (1)
+Type: 3
+Position: 0 0 5
+Rotation: 0 0 0
+Scale: 1 1 1
+HasRigidBody: 0
