@@ -19,7 +19,7 @@ Sphere::Sphere(std::string name, Vector3D pos, float radius, int tessellationLev
 	this->radius = radius;
 	this->tessellationLevel = tessellationLevel;
 
-	m_wood_tex = GraphicsEngine::getInstance()->getTextureManager()->createTextureFromFile(L"Assets\\Textures\\blank.jpg");
+	m_wood_tex = GraphicsEngine::getInstance()->getTextureManager()->createTextureFromFile(L"Assets\\Textures\\brick.png");
 
 	generateEdgesAtTessellation(tessellationLevel);
 
@@ -57,8 +57,6 @@ Sphere::Sphere(std::string name, Vector3D pos, float radius, int tessellationLev
 
 Sphere::~Sphere()
 {
-	delete m_wood_tex;
-
 	delete m_vb;
 	delete m_vs;
 	delete m_ps;

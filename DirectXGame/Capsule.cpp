@@ -19,7 +19,7 @@ Capsule::Capsule(std::string name, Vector3D pos, float radius, float cylinderHei
 	this->localScale = Vector3D(1,1,1);
 	this->cylinderHeight = cylinderHeight;
 
-	m_wood_tex = GraphicsEngine::getInstance()->getTextureManager()->createTextureFromFile(L"Assets\\Textures\\blank.jpg");
+	m_wood_tex = GraphicsEngine::getInstance()->getTextureManager()->createTextureFromFile(L"Assets\\Textures\\brick.png");
 
 	generateEdges();
 
@@ -57,8 +57,6 @@ Capsule::Capsule(std::string name, Vector3D pos, float radius, float cylinderHei
 
 Capsule::~Capsule()
 {
-	delete m_wood_tex;
-
 	delete m_vb;
 	delete m_vs;
 	delete m_ps;

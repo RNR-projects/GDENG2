@@ -1,0 +1,78 @@
+Cube
+Type: 1
+Position: 2.0 0.0 0.0
+Rotation: 0.0 0.0 0.0
+Scale: 1.0 1.0 1.0
+HasRigidBody: 1
+Cube (1)
+Type: 1
+Position: -3.0 0.0 0.0
+Rotation: 0.0 0.0 0.0
+Scale: 1.0 1.0 1.0
+HasRigidBody: 1
+Cube (2)
+Type: 1
+Position: 0.0 0.0 1.0
+Rotation: 0.0 0.0 0.0
+Scale: 1.0 1.0 1.0
+HasRigidBody: 1
+Plane
+Type: 2
+Position: 0.0 -2.0 0.0
+Rotation: 0.0 0.0 0.0
+Scale: 15.0 0.1 15.0
+HasRigidBody: 1
+Plane (1)
+Type: 2
+Position: 0.0 -10.0 0.0
+Rotation: 0.0 0.0 0.0
+Scale: 15.0 0.1 15.0
+HasRigidBody: 0
+Sphere
+Type: 3
+Position: 0.0 0.0 -2.0
+Rotation: 0.0 0.0 0.0
+Scale: 1.0 1.0 1.0
+HasRigidBody: 0
+Sphere (1)
+Type: 3
+Position: 0.0 0.0 5.0
+Rotation: 0.0 0.0 0.0
+Scale: 1.0 1.0 1.0
+HasRigidBody: 0
+Capsule
+Type: 4
+Position: 0.0 2.0 0.0
+Rotation: 0.0 0.0 0.0
+Scale: 1.0 1.0 1.0
+HasRigidBody: 1
+Capsule (1)
+Type: 4
+Position: 0.0 0.0 0.0
+Rotation: 0.0 0.0 0.0
+Scale: 1.0 1.0 1.0
+HasRigidBody: 0
+Capsule (1)2
+Type: 4
+Position: 1.1 1.7 0.1
+Rotation: 0.0 0.0 1.221731
+Scale: 1.0 1.0 1.0
+HasRigidBody: 0
+Capsule2
+Type: 4
+Position: -1.3 1.0 0.1
+Rotation: 0.0 0.0 -1.047197
+Scale: 1.0 1.0 1.0
+HasRigidBody: 1
+Capsule3
+Type: 4
+Position: 2.1 1.0 2.3
+Rotation: 0.0 -1.396265 -1.047197
+Scale: 1.0 1.0 1.0
+HasRigidBody: 1
+Capsule4
+Type: 4
+Position: 0.6 1.0 2.4
+Rotation: 2.70113 1.788991 -0.659964
+Scale: 1.0 1.0 1.0
+HasRigidBody: 1

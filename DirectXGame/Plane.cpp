@@ -24,7 +24,7 @@ Plane::Plane(std::string name, Vector3D pos, Vector3D scale, Vector3D color, Vec
 
 	RenderSystem* graphEngine = GraphicsEngine::getInstance()->getRenderSystem();
 	
-	tex = GraphicsEngine::getInstance()->getTextureManager()->createTextureFromFile(L"Assets\\Textures\\blank.jpg");
+	tex = GraphicsEngine::getInstance()->getTextureManager()->createTextureFromFile(L"Assets\\Textures\\brick.png");
 
 	void* shader_byte_code = nullptr;
 	size_t size_shader = 0;
@@ -62,8 +62,6 @@ Plane::Plane(std::string name, Vector3D pos, Vector3D scale, Vector3D color, Vec
 
 Plane::~Plane()
 {
-	delete tex;
-
 	delete m_vb;
 	delete m_vs;
 	delete m_ps;

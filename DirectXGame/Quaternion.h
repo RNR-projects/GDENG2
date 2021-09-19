@@ -66,11 +66,12 @@ public:
 	{
 		Quaternion pointQuaternion(0, point.x, point.y, point.z);
 		Quaternion inverse(rotation);
+		Quaternion rot(rotation);
 		Quaternion result;
 
 		inverse.invert();
 
-		result = inverse * pointQuaternion * rotation;
+		result = rot * pointQuaternion * inverse;
 
 		return Vector3D(result.i, result.j, result.k);	
 	}
@@ -86,7 +87,7 @@ public:
 
 		inverse.invert();
 
-		result = inverse * pointQuaternion * quatRotation;
+		result = quatRotation * pointQuaternion * inverse;
 
 		return Vector3D(result.i, result.j, result.k);	
 	}
